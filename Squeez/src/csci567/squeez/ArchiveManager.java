@@ -2,19 +2,23 @@ package csci567.squeez;
 
 import java.util.ArrayList;
 
-import android.R.string;
-
 public class ArchiveManager {
 
-	public static Status Zip(ArrayList<string> files, string archive) {
+	public static Status Zip(ArrayList<String> files, String archive) {
+		
+		assert(false);
 		return Status.OK;
 	}
 	
-	public static Status Unzip(ArrayList<string> files, string archive) {
+	public static Status Unzip(ArrayList<String> files, String archive) {
+		
+		assert(false);
 		return Status.OK;
 	}
 	
-	public static Status Unzip(ArrayList<string> files, string archive, string destination) {
+	public static Status Unzip(ArrayList<String> files, String archive, String destination) {
+		
+		assert(false);
 		return Status.OK;
 	}
 	
