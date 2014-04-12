@@ -3,14 +3,23 @@ package csci567.squeez;
 import java.io.File;
 import java.util.ArrayList;
 
-import android.content.Intent;
-import android.net.Uri;
-
 public class FileManager {
 
 	//Some of these asserts will be handled by status codes later
 	
 	public static Status List(String directory, ArrayList<String> files) {
+		
+		files.clear(); //clear out the ArrayList before using it
+		
+		File folder = new File(directory);
+		String[] fileList = folder.list();
+		
+		//Handle Exceptions!
+		
+		//Add all of the files to the ArrayList
+		for (int i = 0; i < fileList.length; i++) {
+			files.add(fileList[i]);
+		}
 		
 		assert(false);
 		return Status.OK;
@@ -18,8 +27,11 @@ public class FileManager {
 	
 	public static Status Move(String source, String destination) {
 		assert(source != destination);
+		
 		Copy(source, destination);
 		Delete(source);
+		
+		//Handle exceptions!
 		
 		assert(false);
 		return Status.OK;
