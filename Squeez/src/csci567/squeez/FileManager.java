@@ -1,6 +1,11 @@
 package csci567.squeez;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 public class FileManager {
@@ -60,9 +65,33 @@ public class FileManager {
 	
 	public static Status Copy(String source, String destination) {
 		assert(source != destination);
+		FileInputStream inStream = null;
+		FileOutputStream outStream = null;
 		
-		//Copy method
-		
+		try {
+			inStream = new FileInputStream(source);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	    try {
+			outStream = new FileOutputStream(destination);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	    
+	    FileChannel inChannel = inStream.getChannel();
+	    FileChannel outChannel = outStream.getChannel();
+	    
+	    try {
+			inChannel.transferTo(0, inChannel.size(), outChannel);
+			inStream.close();
+		    outStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	    
+	    //Handle Exceptions!
+	    
 		assert(false);
 		return Status.OK;
 	}
