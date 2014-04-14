@@ -4,5 +4,9 @@
     <string name="app_name">Squeez</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="list">List View</string>
+    <string name="grid">Grid View</string>
+    <string name="title_activity_list_view">ListView</string>
+    <string name="title_activity_list_view2">ListView2</string>
 
 </resources>
