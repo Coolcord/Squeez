@@ -1,5 +1,5 @@
 package csci567.squeez;
 
 public enum Status {
-    OK, ERROR
+    OK, DOES_NOT_EXIST, ERROR
 }

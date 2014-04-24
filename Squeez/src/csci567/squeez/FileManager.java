@@ -17,16 +17,19 @@ public class FileManager {
 		files.clear(); //clear out the ArrayList before using it
 		
 		File folder = new File(directory);
-		String[] fileList = folder.list();
+		String[] fileList = null;
 		
-		//Handle Exceptions!
+		//Make sure the folder exists
+		if (!folder.exists()) {
+			return Status.DOES_NOT_EXIST;
+		}
+		fileList = folder.list(); //get the files in the folder
 		
 		//Add all of the files to the ArrayList
 		for (int i = 0; i < fileList.length; i++) {
 			files.add(fileList[i]);
 		}
 		
-		assert(false);
 		return Status.OK;
 	}
 	
