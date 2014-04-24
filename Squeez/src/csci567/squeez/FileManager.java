@@ -9,8 +9,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 public class FileManager {
-
-	//Some of these asserts will be handled by status codes later
 	
 	public static Status List(String directory, ArrayList<String> files) {
 		assert(files != null);
@@ -40,13 +38,21 @@ public class FileManager {
 	
 	public static Status Move(String source, String destination) {
 		assert(source != destination);
+		Status s = Status.OK;
 		
-		Copy(source, destination);
-		Delete(source);
+		//Perform the copy
+		s = Copy(source, destination);
+		if (s != Status.OK) { //make sure the copy was successful
+			Delete(destination); //try to undo what's been done
+			return s;
+		}
 		
-		//Handle exceptions!
+		//Perform the delete
+		s = Delete(source);
+		if (s != Status.OK) { //make sure the delete was successful
+			return s;
+		}
 		
-		assert(false);
 		return Status.OK;
 	}
 	
@@ -61,14 +67,21 @@ public class FileManager {
 		}
 		destination += newName;
 		
+		//Check to see if the names are valid
 		File oldFile = new File(source);
 		File newFile = new File(destination);
-		oldFile.renameTo(newFile);
+		if (!oldFile.exists()) {
+			return Status.DOES_NOT_EXIST;
+		} else if (newFile.exists()) {
+			return Status.NAME_TAKEN;
+		}
 		
-		//Handle exceptions!
-		
-		assert(false);
-		return Status.OK;
+		//Rename the file
+		if (oldFile.renameTo(newFile)) {
+			return Status.OK;
+		} else {
+			return Status.COULD_NOT_RENAME;
+		}
 	}
 	
 	public static Status Copy(String source, String destination) {
@@ -80,11 +93,13 @@ public class FileManager {
 			inStream = new FileInputStream(source);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			return Status.DOES_NOT_EXIST;
 		}
 	    try {
 			outStream = new FileOutputStream(destination);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			return Status.COULD_NOT_COPY;
 		}
 	    
 	    FileChannel inChannel = inStream.getChannel();
@@ -96,11 +111,14 @@ public class FileManager {
 		    outStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return Status.COULD_NOT_COPY;
 		}
 	    
-	    //Handle Exceptions!
+	    File newFile = new File(destination);
+	    if (!newFile.exists()) { //the new file should exist
+	    	return Status.COULD_NOT_COPY; //if not, something went wrong
+	    }
 	    
-		assert(false);
 		return Status.OK;
 	}
 	
