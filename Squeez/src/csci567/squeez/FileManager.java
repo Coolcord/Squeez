@@ -89,6 +89,16 @@ public class FileManager {
 		FileInputStream inStream = null;
 		FileOutputStream outStream = null;
 		
+		//Delete the destination file if it exists
+		File newFile = new File(destination);
+		if (newFile.exists()) {
+			Status s = Delete(destination);
+			if (s != Status.OK){
+				return s;
+			}
+		}
+		
+		//Prepare copy streams
 		try {
 			inStream = new FileInputStream(source);
 		} catch (FileNotFoundException e) {
@@ -99,12 +109,18 @@ public class FileManager {
 			outStream = new FileOutputStream(destination);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			try {
+				inStream.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			return Status.COULD_NOT_COPY;
 		}
 	    
 	    FileChannel inChannel = inStream.getChannel();
 	    FileChannel outChannel = outStream.getChannel();
 	    
+	    //Perform copy
 	    try {
 			inChannel.transferTo(0, inChannel.size(), outChannel);
 			inStream.close();
@@ -114,7 +130,6 @@ public class FileManager {
 			return Status.COULD_NOT_COPY;
 		}
 	    
-	    File newFile = new File(destination);
 	    if (!newFile.exists()) { //the new file should exist
 	    	return Status.COULD_NOT_COPY; //if not, something went wrong
 	    }
