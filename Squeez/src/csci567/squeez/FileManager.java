@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class FileManager {
 	
-	public static Status List(String directory, ArrayList<String> files) {
+	public static Status List(ArrayList<String> files, String directory) {
 		assert(files != null);
 		
 		files.clear(); //clear out the ArrayList before using it
@@ -36,6 +36,26 @@ public class FileManager {
 		return Status.OK;
 	}
 	
+	public static Status Move(ArrayList<String> files, String source, String destination) {
+		
+		Status s = Status.OK;
+		Status listStatus = Status.OK;
+		s = Move(source, destination);
+		
+		//Build the destination path
+		String[] name = source.split("/");
+		String folder = "";
+		for (int i = 0; i < name.length-1; i++) {
+			folder += name[i] + "/";
+		}
+		
+		listStatus = List(files, folder);
+		if (s == Status.OK && listStatus != Status.OK) {
+			return listStatus;
+		}
+		return s;
+	}
+	
 	public static Status Move(String source, String destination) {
 		assert(source != destination);
 		Status s = Status.OK;
@@ -54,6 +74,26 @@ public class FileManager {
 		}
 		
 		return Status.OK;
+	}
+	
+	public static Status Rename(ArrayList<String> files, String source, String newName) {
+		
+		Status s = Status.OK;
+		Status listStatus = Status.OK;
+		s = Rename(source, newName);
+		
+		//Build the destination path
+		String[] name = source.split("/");
+		String folder = "";
+		for (int i = 0; i < name.length-1; i++) {
+			folder += name[i] + "/";
+		}
+		
+		listStatus = List(files, folder);
+		if (s == Status.OK && listStatus != Status.OK) {
+			return listStatus;
+		}
+		return s;
 	}
 	
 	public static Status Rename(String source, String newName) {
@@ -82,6 +122,26 @@ public class FileManager {
 		} else {
 			return Status.COULD_NOT_RENAME;
 		}
+	}
+	
+	public static Status Copy(ArrayList<String> files, String source, String destination) {
+		
+		Status s = Status.OK;
+		Status listStatus = Status.OK;
+		s = Copy(source, destination);
+		
+		//Build the destination path
+		String[] name = source.split("/");
+		String folder = "";
+		for (int i = 0; i < name.length-1; i++) {
+			folder += name[i] + "/";
+		}
+		
+		listStatus = List(files, folder);
+		if (s == Status.OK && listStatus != Status.OK) {
+			return listStatus;
+		}
+		return s;
 	}
 	
 	public static Status Copy(String source, String destination) {
@@ -148,6 +208,26 @@ public class FileManager {
 		return Status.OK;
 	}
 	
+	public static Status Delete(ArrayList<String> files, String source) {
+		
+		Status s = Status.OK;
+		Status listStatus = Status.OK;
+		s = Delete(source);
+		
+		//Build the destination path
+		String[] name = source.split("/");
+		String folder = "";
+		for (int i = 0; i < name.length-1; i++) {
+			folder += name[i] + "/";
+		}
+		
+		listStatus = List(files, folder);
+		if (s == Status.OK && listStatus != Status.OK) {
+			return listStatus;
+		}
+		return s;
+	}
+	
 	public static Status Delete(String source) {
 		File file = new File(source);
 		
@@ -159,7 +239,7 @@ public class FileManager {
 		//Call delete on all files in the folder
 		if (file.isDirectory()) {
 			ArrayList<String> files = new ArrayList<String>();
-			Status s = List(source, files);
+			Status s = List(files, source);
 			assert(s == Status.OK);
 			for (String fileName : files) {
 				s = Delete(fileName);

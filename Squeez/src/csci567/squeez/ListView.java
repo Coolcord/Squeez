@@ -15,7 +15,7 @@ public class ListView extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		String[] values = new String[] { "use", "get", "file", "function" };
-		//FM.List(String directory, values);
+		//FileManager.List(values, String directory);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_sub, R.id.list_view_text1, values);
 		setListAdapter(adapter);
 	}
