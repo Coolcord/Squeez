@@ -3,38 +3,34 @@ package csci567.squeez;
 import java.util.ArrayList;
 
 import android.annotation.TargetApi;
-import android.app.ListActivity;
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
-public class ListView extends ListActivity {
+public class ListView extends Activity implements OnClickListener {
 
+	String directory;
+	ArrayList<String> files;
+	LinearLayout layout;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.list_view_sub);
 		//String[] values = new String[] { "use", "get", "file", "function" };
 		
-		ArrayList<String> files = new ArrayList<String>();
-		String directory = "/";
-		FileManager.List(files, directory);
-		LinearLayout layout = (LinearLayout) findViewById(R.id.ListViewLayout);
+		files = new ArrayList<String>();
+		directory = "/";
+		layout = (LinearLayout)findViewById(R.id.ListViewLayout);
 		
-		/*
-		 * This for loop can be used to make clickable objects for each file given
-		for (String fileName : files) {
-			Button btnFile = new Button(this);
-			btnFile.setText(fileName);
-			//layout.addView(btnFile);
-		}
-		*/
-		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_sub, R.id.list_view_text1, files);
-		setListAdapter(adapter);
+		Refresh();
 	}
 
 	/**
@@ -69,6 +65,26 @@ public class ListView extends ListActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void onClick(View v) {
+		Button btn = (Button)v;
+	    String folder = btn.getText().toString();
+	    directory += "/" + folder;
+	    Refresh();
+	}
+	
+	public void Refresh() {
+		FileManager.List(files, directory);
+		layout.removeAllViews();
+		
+		//This for loop can be used to make clickable objects for each file given
+		for (String fileName : files) {
+			Button btnFile = new Button(getApplicationContext());
+			btnFile.setText(fileName);
+			btnFile.setOnClickListener(this);
+			layout.addView(btnFile);
+		}
 	}
 
 }
