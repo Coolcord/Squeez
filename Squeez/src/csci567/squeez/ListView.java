@@ -1,22 +1,39 @@
 package csci567.squeez;
 
-import android.os.Bundle;
+import java.util.ArrayList;
+
+import android.annotation.TargetApi;
 import android.app.ListActivity;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.support.v4.app.NavUtils;
-import android.annotation.TargetApi;
-import android.os.Build;
+import android.widget.LinearLayout;
 
 public class ListView extends ListActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		String[] values = new String[] { "use", "get", "file", "function" };
-		//FileManager.List(values, String directory);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_sub, R.id.list_view_text1, values);
+		//String[] values = new String[] { "use", "get", "file", "function" };
+		
+		ArrayList<String> files = new ArrayList<String>();
+		String directory = "/";
+		FileManager.List(files, directory);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.ListViewLayout);
+		
+		/*
+		 * This for loop can be used to make clickable objects for each file given
+		for (String fileName : files) {
+			Button btnFile = new Button(this);
+			btnFile.setText(fileName);
+			//layout.addView(btnFile);
+		}
+		*/
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_sub, R.id.list_view_text1, files);
 		setListAdapter(adapter);
 	}
 
