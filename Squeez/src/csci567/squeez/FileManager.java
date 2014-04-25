@@ -96,6 +96,17 @@ public class FileManager {
 			if (s != Status.OK){
 				return s;
 			}
+		} else {
+			//Build the destination path
+			String[] name = source.split("/");
+			String path = "";
+			for (int i = 0; i < name.length-1; i++) {
+				path += name[i] + "/";
+			}
+			newFile = new File(path);
+			if (!newFile.mkdirs()) { //create the missing folders
+				return Status.COULD_NOT_COPY;
+			}
 		}
 		
 		//Prepare copy streams
