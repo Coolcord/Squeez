@@ -15,6 +15,7 @@ import java.util.zip.ZipOutputStream;
 public class ArchiveManager {
 
 	public static Status Zip(ArrayList<String> files, String archive) {
+		assert(files != null);
 		assert(files.size() > 0);
 		
 		BufferedInputStream bufferIn = null;
@@ -123,6 +124,7 @@ public class ArchiveManager {
 	}
 	
 	public static Status Unzip(ArrayList<String> files, String archive) {
+		assert(files != null);
 		
 		//Build the destination path
 		String[] name = archive.split("/");
@@ -136,6 +138,7 @@ public class ArchiveManager {
 	
 	public static Status Unzip(ArrayList<String> files, String archive, String destination) {
 		assert(archive != destination);
+		assert(files != null);
 		
 		//Make sure the archive exists
 		File archiveFile = new File(archive);

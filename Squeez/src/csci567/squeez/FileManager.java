@@ -37,6 +37,7 @@ public class FileManager {
 	}
 	
 	public static Status Move(ArrayList<String> files, String source, String destination) {
+		assert(files != null);
 		
 		Status s = Status.OK;
 		Status listStatus = Status.OK;
@@ -77,6 +78,7 @@ public class FileManager {
 	}
 	
 	public static Status Rename(ArrayList<String> files, String source, String newName) {
+		assert(files != null);
 		
 		Status s = Status.OK;
 		Status listStatus = Status.OK;
@@ -125,6 +127,7 @@ public class FileManager {
 	}
 	
 	public static Status Copy(ArrayList<String> files, String source, String destination) {
+		assert(files != null);
 		
 		Status s = Status.OK;
 		Status listStatus = Status.OK;
@@ -209,6 +212,7 @@ public class FileManager {
 	}
 	
 	public static Status Delete(ArrayList<String> files, String source) {
+		assert(files != null);
 		
 		Status s = Status.OK;
 		Status listStatus = Status.OK;
