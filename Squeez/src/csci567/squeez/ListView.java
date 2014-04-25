@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class ListView extends Activity implements OnClickListener {
 
@@ -88,6 +89,25 @@ public class ListView extends Activity implements OnClickListener {
 			btnFile.setText(fileName);
 			btnFile.setOnClickListener(this);
 			layout.addView(btnFile);
+		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if (directory == "/") {
+			super.onBackPressed();
+		} else {
+			//Build the destination path
+			String[] name = directory.split("/");
+			if (name.length > 2) {
+				directory = "";
+				for (int i = 0; i < name.length-1; i++) {
+					directory += "/" + name[i];
+				}
+			} else {
+				directory = "/";
+			}
+			Refresh();
 		}
 	}
 

@@ -112,8 +112,12 @@ public class ArchiveManager {
 		//Build the destination path
 		String[] name = archive.split("/");
 		String destination = "";
-		for (int i = 0; i < name.length-1; i++) {
-			destination += name[i] + "/";
+		if (name.length > 2) {
+			for (int i = 0; i < name.length-1; i++) {
+				destination += "/" + name[i];
+			}
+		} else {
+			destination = "/";
 		}
 		
 		s = FileManager.List(files, destination); //refresh the contents of the current directory
@@ -129,8 +133,12 @@ public class ArchiveManager {
 		//Build the destination path
 		String[] name = archive.split("/");
 		String destination = "";
-		for (int i = 0; i < name.length-1; i++) {
-			destination += name[i] + "/";
+		if (name.length > 2) {
+			for (int i = 0; i < name.length-1; i++) {
+				destination += "/" + name[i];
+			}
+		} else {
+			destination = "/";
 		}
 		
 		return Unzip(files, archive, destination); //unzip to current directory

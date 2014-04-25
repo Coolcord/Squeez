@@ -50,8 +50,12 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		for (int i = 0; i < name.length-1; i++) {
-			folder += name[i] + "/";
+		if (name.length > 2) {
+			for (int i = 0; i < name.length-1; i++) {
+				folder += "/" + name[i];
+			}
+		} else {
+			folder = "/";
 		}
 		
 		listStatus = List(files, folder);
@@ -91,8 +95,12 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		for (int i = 0; i < name.length-1; i++) {
-			folder += name[i] + "/";
+		if (name.length > 2) {
+			for (int i = 0; i < name.length-1; i++) {
+				folder += "/" + name[i];
+			}
+		} else {
+			folder = "/";
 		}
 		
 		listStatus = List(files, folder);
@@ -108,8 +116,12 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String destination = "";
-		for (int i = 0; i < name.length-1; i++) {
-			destination += name[i] + "/";
+		if (name.length > 2) {
+			for (int i = 0; i < name.length-1; i++) {
+				destination += "/" + name[i];
+			}
+		} else {
+			destination = "/";
 		}
 		destination += newName;
 		
@@ -140,8 +152,12 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		for (int i = 0; i < name.length-1; i++) {
-			folder += name[i] + "/";
+		if (name.length > 2) {
+			for (int i = 0; i < name.length-1; i++) {
+				folder += "/" + name[i];
+			}
+		} else {
+			folder = "/";
 		}
 		
 		listStatus = List(files, folder);
@@ -167,8 +183,12 @@ public class FileManager {
 			//Build the destination path
 			String[] name = source.split("/");
 			String path = "";
-			for (int i = 0; i < name.length-1; i++) {
-				path += name[i] + "/";
+			if (name.length > 2) {
+				for (int i = 0; i < name.length-1; i++) {
+					path += "/" + name[i];
+				}
+			} else {
+				path = "/";
 			}
 			newFile = new File(path);
 			if (!newFile.mkdirs()) { //create the missing folders
@@ -225,8 +245,12 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		for (int i = 0; i < name.length-1; i++) {
-			folder += name[i] + "/";
+		if (name.length > 2) {
+			for (int i = 0; i < name.length-1; i++) {
+				folder += "/" + name[i];
+			}
+		} else {
+			folder = "/";
 		}
 		
 		listStatus = List(files, folder);
