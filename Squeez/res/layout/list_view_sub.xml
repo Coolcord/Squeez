@@ -1,7 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:id="@+id/ListViewLayout"
-    android:layout_width="wrap_content"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    android:id="@+id/ListViewScrollLayout"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/ListViewVerticalLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+    </LinearLayout>
+
+</ScrollView>

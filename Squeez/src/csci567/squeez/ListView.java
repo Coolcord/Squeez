@@ -28,7 +28,7 @@ public class ListView extends Activity implements OnClickListener {
 		
 		files = new ArrayList<String>();
 		directory = "/";
-		layout = (LinearLayout)findViewById(R.id.ListViewLayout);
+		layout = (LinearLayout)findViewById(R.id.ListViewVerticalLayout);
 		
 		Refresh();
 	}
@@ -70,8 +70,12 @@ public class ListView extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		Button btn = (Button)v;
 	    String folder = btn.getText().toString();
-	    directory += "/" + folder;
-	    Refresh();
+	    
+	    //Load the new Directory
+	    if (folder.charAt(folder.length() - 1) == '/') {
+		    directory += folder;
+		    Refresh();
+		}
 	}
 	
 	public void Refresh() {
@@ -80,7 +84,7 @@ public class ListView extends Activity implements OnClickListener {
 		
 		//This for loop can be used to make clickable objects for each file given
 		for (String fileName : files) {
-			Button btnFile = new Button(getApplicationContext());
+			Button btnFile = new Button(getApplicationContext());	
 			btnFile.setText(fileName);
 			btnFile.setOnClickListener(this);
 			layout.addView(btnFile);

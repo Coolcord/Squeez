@@ -29,6 +29,10 @@ public class FileManager {
 		//Add all of the files to the ArrayList
 		if (fileList != null) {
 			for (int i = 0; i < fileList.length; i++) {
+				folder = new File(fileList[i]);
+				if (folder.isDirectory()) {
+					fileList[i] += "/";
+				}
 				files.add(fileList[i]);
 			}
 		}
