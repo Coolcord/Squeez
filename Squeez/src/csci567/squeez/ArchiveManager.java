@@ -3,6 +3,7 @@ package csci567.squeez;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
@@ -49,6 +50,7 @@ public class ArchiveManager {
 		
 		//Open the archive
 		FileInputStream archiveFileStream = null;
+		FileOutputStream fileStream = null;
 		ZipInputStream zip = null;
 		ZipEntry zipEntry = null;
 		try {
@@ -62,8 +64,25 @@ public class ArchiveManager {
 		//Perform unzip
 		try {
 			while ((zipEntry = zip.getNextEntry()) != null) {
-				//Unzip each entry here
-				assert(false);
+				if (zipEntry.isDirectory()) {
+					File folder = new File(destination + zipEntry.getName());
+					if (!folder.exists()) {
+						folder.mkdirs();
+					} else { //it already exists, so delete it first
+						Status s = FileManager.Delete(destination + zipEntry.getName());
+						if (s != Status.OK) {
+							zip.close();
+							return s; //something went wrong with delete
+						}
+						folder.mkdirs(); //recreate the folder
+					}
+				} else {
+					fileStream = new FileOutputStream(destination + zipEntry.getName());
+					for (int i = zip.read(); i != -1; i = zip.read()) {
+						fileStream.write(i); //write the bytes
+					}
+					fileStream.close();
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -86,7 +105,6 @@ public class ArchiveManager {
 		}
 		
 		FileManager.List(destination, files); //refresh the contents of the current directory
-		assert(false);
 		return Status.OK;
 	}
 	
