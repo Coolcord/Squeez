@@ -5,9 +5,9 @@ import android.content.Context;
 
 public class ErrorHandler {
 	
-	public static void ShowError(Status status, Context context) {
+	public static void ShowError(Status status, String fileName, Context context) {
 		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-		alertDialog.setTitle("It's all over!!!");
+		alertDialog.setTitle("Error");
 		
 		switch (status)
 		{
@@ -15,34 +15,32 @@ public class ErrorHandler {
 				//Nothing to see here
 				return;
 			case DOES_NOT_EXIST:
-				alertDialog.setMessage("DOES_NOT_EXIST");
+				alertDialog.setMessage(fileName + " does not exist!");
 				break;
 			case NAME_TAKEN:
-				alertDialog.setMessage("NAME_TAKEN");
+				alertDialog.setMessage("A file by the name of " + fileName + " already exists!");
 				break;
 			case NOT_DIRECTORY:
-				alertDialog.setMessage("NOT_DIRECTORY");
+			case DESTINATION_NOT_DIRECTORY: //same message
+				alertDialog.setMessage(fileName + " is not a directory!");
 				break;
 			case NOT_FILE:
-				alertDialog.setMessage("NOT_FILE");
+				alertDialog.setMessage(fileName + " is not a file!");
 				break;
 			case COULD_NOT_DELETE:
-				alertDialog.setMessage("COULD_NOT_DELETE");
+				alertDialog.setMessage("Could not delete " + fileName);
 				break;
 			case COULD_NOT_RENAME:
-				alertDialog.setMessage("COULD_NOT_RENAME");
+				alertDialog.setMessage("Could not rename " + fileName);
 				break;
 			case COULD_NOT_COPY:
-				alertDialog.setMessage("COULD_NOT_COPY");
+				alertDialog.setMessage("Could not copy " + fileName);
 				break;
 			case COULD_NOT_UNZIP:
-				alertDialog.setMessage("COULD_NOT_UNZIP");
+				alertDialog.setMessage("Could not unzip " + fileName);
 				break;
 			case COULD_NOT_ZIP:
-				alertDialog.setMessage("COULD_NOT_ZIP");
-				break;
-			case DESTINATION_NOT_DIRECTORY:
-				alertDialog.setMessage("DESTINATION_NOT_DIRECTORY");
+				alertDialog.setMessage("Could not zip " + fileName);
 				break;
 			default:
 				assert(false);
