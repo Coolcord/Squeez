@@ -437,32 +437,29 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 					break;
 				}
 				alertDialogBuilder = new AlertDialog.Builder(this);                 
-				alertDialogBuilder.setTitle("Rename");  
-				alertDialogBuilder.setMessage("Enter a new name: ");                
-				final EditText unzipInput = new EditText(this); 
+				alertDialogBuilder.setTitle("Unzip");  
+				alertDialogBuilder.setMessage("Would you like to unzip these files?");                
 			 	DialogInterface.OnClickListener unzipDiag = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == DialogInterface.BUTTON_POSITIVE) {
-							String newName = unzipInput.getText().toString();
 							Status s = Status.OK;
 							for (String file : toManage) {
-								s = ArchiveManager.Unzip(file, directory + newName);
+								s = ArchiveManager.Unzip(file);
 								if (s != Status.OK) {
 									ErrorHandler.ShowError(s, file, context);
 									break;
 								}
 							}
 							if (s == Status.OK) {
-								Toast.makeText(context, "File Renamed", Toast.LENGTH_LONG).show();
+								Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
 							}
 							Refresh();
 						}
 					}
 				};
-				alertDialogBuilder.setView(unzipInput);
-				alertDialogBuilder.setPositiveButton("Ok", unzipDiag);
-				alertDialogBuilder.setNegativeButton("Cancel", unzipDiag);
+				alertDialogBuilder.setPositiveButton("Yes", unzipDiag);
+				alertDialogBuilder.setNegativeButton("No", unzipDiag);
 			    alertDialog = alertDialogBuilder.create();
 				alertDialog.show();
 				break;
