@@ -13,14 +13,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class ListViewer extends Activity implements OnClickListener {
+public class ListViewer extends Activity {
 
 	String directory;
 	ArrayList<String> files;
@@ -75,12 +80,14 @@ public class ListViewer extends Activity implements OnClickListener {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.context_menu, menu);
 	}
 	
+	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		int position = info.position;
@@ -109,10 +116,10 @@ public class ListViewer extends Activity implements OnClickListener {
 			Toast.makeText(getBaseContext(), "delete selected: ", Toast.LENGTH_LONG).show();
 			return true;
 		}
-		return super.onContextItemSelected(null);
+		return true;
 	}
 	
-	public void onClick(View v) {
+	/*public void onClick(View v) {
 		Button btn = (Button)v;
 	    String folder = btn.getText().toString();
 	    
@@ -121,7 +128,11 @@ public class ListViewer extends Activity implements OnClickListener {
 		    directory += folder;
 		    Refresh();
 		}
-	}
+	}*/
+	
+//	public void Item_click(View v) {//replaces onclick function
+		
+	//}
 	
 	public void Refresh() {
 		FileManager.List(files, directory);
@@ -129,9 +140,37 @@ public class ListViewer extends Activity implements OnClickListener {
 		
 		list_items = new String[files.size()];
 		list_items = files.toArray(list_items);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list_items);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_items, list_items);
 		Lview.setAdapter(adapter);
 		registerForContextMenu(Lview);
+		Lview.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v, int position,
+					long id) {
+				TextView txt = (TextView)v;
+				String folder = txt.getText().toString();
+			    
+			    //Load the new Directory
+			    if (folder.charAt(folder.length() - 1) == '/') {
+				    directory += folder;
+				    Refresh();
+				}
+				
+			}
+			
+		});
+/*		Lview.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View v,
+					int position, long id) {
+				Toast.makeText(getBaseContext(), "long click: ", Toast.LENGTH_LONG).show();
+				registerForContextMenu(v);
+				return true;
+			}
+			
+		});*/
 		//This for loop can be used to make clickable objects for each file given
 		/*for (String fileName : files) {
 			Button btnFile = new Button(getApplicationContext());	
