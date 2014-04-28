@@ -18,7 +18,7 @@ public class ArchiveManager {
 		assert(files != null);
 		assert(files.size() > 0);
 		
-		BufferedInputStream bufferIn = null;
+//		BufferedInputStream bufferIn = null;
 		FileInputStream inputFile = null;
 		FileOutputStream outputArchive = null;
 		Status s = Status.OK;
@@ -39,8 +39,8 @@ public class ArchiveManager {
 			e.printStackTrace();
 			return Status.COULD_NOT_ZIP;
 		}
-		BufferedOutputStream bufferOut = new BufferedOutputStream(outputArchive);
-		ZipOutputStream zip = new ZipOutputStream(bufferOut);
+//		BufferedOutputStream bufferOut = new BufferedOutputStream(outputArchive);
+		ZipOutputStream zip = new ZipOutputStream(outputArchive);
 		ZipEntry zipEntry = null;
 		byte bytes[] = new byte[1024];
 		
@@ -48,29 +48,31 @@ public class ArchiveManager {
 		try {
 			for (String fileName : files) {
 				inputFile = new FileInputStream(fileName);
-				bufferIn = new BufferedInputStream(inputFile, 1024);
+	//			bufferIn = new BufferedInputStream(inputFile, 1024);
 				zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
 				zip.putNextEntry(zipEntry);
-				//int length = 0;
-				//while ((length = bufferIn.read(bytes)) > 0) {
-					//outputArchive.write(bytes, 0, length);
-				//}
+				int length = 0;
+				while ((length = inputFile.read(bytes)) > 0) {
+					zip.write(bytes, 0, length);
+				}
 				//int count;
 		        //while ((count = bufferIn.read(bytes, 0, 1024)) != -1) {
 		        	//outputArchive.write(bytes, 0, count);
 		        //}
-				for (int i = bufferIn.read(bytes); i != -1; i = bufferIn.read(bytes)) {
-					outputArchive.write(bytes, 0, i);
-				}
-				bufferIn.close();
+				//for (int i = bufferIn.read(bytes); i != -1; i = bufferIn.read(bytes)) {
+					//outputArchive.write(bytes, 0, i);
+				//}
+				//bufferIn.close();
+				zip.closeEntry();
 				inputFile.close();
 			}
 			zip.close();
-			bufferOut.close();
+			outputArchive.close();
+			//bufferOut.close();
 		} catch (IOException e) { //something went wrong
 			e.printStackTrace();
 			try {
-				bufferIn.close();
+				inputFile.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
