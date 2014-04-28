@@ -51,7 +51,15 @@ public class ArchiveManager {
 				bufferIn = new BufferedInputStream(inputFile, 1024);
 				zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
 				zip.putNextEntry(zipEntry);
-				for (int i = bufferIn.read(); i != -1; i = bufferIn.read()) {
+				//int length = 0;
+				//while ((length = bufferIn.read(bytes)) > 0) {
+					//outputArchive.write(bytes, 0, length);
+				//}
+				//int count;
+		        //while ((count = bufferIn.read(bytes, 0, 1024)) != -1) {
+		        	//outputArchive.write(bytes, 0, count);
+		        //}
+				for (int i = bufferIn.read(bytes); i != -1; i = bufferIn.read(bytes)) {
 					outputArchive.write(bytes, 0, i);
 				}
 				bufferIn.close();
