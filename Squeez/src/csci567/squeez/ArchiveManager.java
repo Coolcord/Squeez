@@ -65,6 +65,7 @@ public class ArchiveManager {
 				bufferIn.close();
 				inputFile.close();
 			}
+			zip.close();
 			bufferOut.close();
 		} catch (IOException e) { //something went wrong
 			e.printStackTrace();
@@ -83,33 +84,6 @@ public class ArchiveManager {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			s = FileManager.Delete(archive);
-			if (s != Status.OK) {
-				return s;
-			}
-			return Status.COULD_NOT_ZIP;
-		}
-		
-		//Close the streams
-		try {
-			zip.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			try {
-				outputArchive.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			s = FileManager.Delete(archive);
-			if (s != Status.OK) {
-				return s;
-			}
-			return Status.COULD_NOT_ZIP;
-		}
-		try {
-			outputArchive.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 			s = FileManager.Delete(archive);
 			if (s != Status.OK) {
 				return s;
