@@ -492,11 +492,14 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		} else {
 			//Build the destination path
 			String[] name = directory.split("/");
-			if (name.length > 2) {
-				directory = "";
+			directory = "";
+			if (name.length > 1) {
 				for (int i = 0; i < name.length-1; i++) {
-					directory += "/" + name[i];
+					if (name[i].length() > 0) {
+						directory += "/" + name[i];
+					}
 				}
+				directory += "/";
 			} else {
 				directory = "/";
 			}
