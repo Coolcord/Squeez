@@ -109,24 +109,6 @@ public class ArchiveManager {
 			return Status.COULD_NOT_ZIP;
 		}
 		
-		//Build the destination path
-		String[] name = archive.split("/");
-		String destination = "";
-		if (name.length > 1) {
-			for (int i = 0; i < name.length-1; i++) {
-				if (name[i].length() > 0) {
-					destination += "/" + name[i];
-				}
-			}
-			destination += "/";
-		} else {
-			destination = "/";
-		}
-		
-		s = FileManager.List(files, destination); //refresh the contents of the current directory
-		if (s != Status.OK) {
-			return s;
-		}
 		return Status.OK;
 	}
 	
@@ -226,10 +208,6 @@ public class ArchiveManager {
 			return Status.COULD_NOT_UNZIP;
 		}
 		
-		Status s = FileManager.List(files, destination); //refresh the contents of the current directory
-		if (s != Status.OK) {
-			return s;
-		}
 		return Status.OK;
 	}
 }

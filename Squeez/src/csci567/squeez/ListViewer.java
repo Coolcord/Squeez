@@ -258,12 +258,12 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialogBuilder = new AlertDialog.Builder(this);                 
 				alertDialogBuilder.setTitle("Rename");  
 				alertDialogBuilder.setMessage("Enter a new name: ");                
-				final EditText input = new EditText(this); 
+				final EditText renameInput = new EditText(this); 
 			 	DialogInterface.OnClickListener renameDiag = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == DialogInterface.BUTTON_POSITIVE) {
-							String newName = input.getText().toString();
+							String newName = renameInput.getText().toString();
 							Status s = Status.OK;
 							for (String file : toManage) {
 								s = FileManager.Rename(file, newName);
@@ -279,11 +279,11 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 						}
 					}
 				};
-				alertDialogBuilder.setView(input);
+				alertDialogBuilder.setView(renameInput);
 				alertDialogBuilder.setPositiveButton("Ok", renameDiag);
 				alertDialogBuilder.setNegativeButton("Cancel", renameDiag);
 			    alertDialog = alertDialogBuilder.create();
-				alertDialog.show();				
+				alertDialog.show();
 				break;
 			case R.id.btnMove:
 				break;
@@ -317,6 +317,31 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialog.show();
 				break;
 			case R.id.btnZip:
+				alertDialogBuilder = new AlertDialog.Builder(this);                 
+				alertDialogBuilder.setTitle("Zip");  
+				alertDialogBuilder.setMessage("Enter a name: ");                
+				final EditText archiveInput = new EditText(this); 
+			 	DialogInterface.OnClickListener archiveDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							String archive = archiveInput.getText().toString();
+							Status s = Status.OK;
+							s = ArchiveManager.Zip(toManage, directory + archive);
+							if (s != Status.OK) {
+								ErrorHandler.ShowError(s, archive, context);
+							} else {
+								Toast.makeText(context, "Archive Created", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setView(archiveInput);
+				alertDialogBuilder.setPositiveButton("Ok", archiveDiag);
+				alertDialogBuilder.setNegativeButton("Cancel", archiveDiag);
+			    alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
 				break;
 			case R.id.btnUnzip:
 				break;
