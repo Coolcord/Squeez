@@ -32,24 +32,40 @@ public final class R {
         public static final int sample_7=0x7f020008;
     }
     public static final class id {
+<<<<<<< HEAD
         public static final int ListViewScrollLayout=0x7f080003;
         public static final int ListViewVerticalLayout=0x7f080004;
         public static final int action_settings=0x7f08000a;
         public static final int copy=0x7f080008;
         public static final int delete=0x7f080009;
         public static final int grid=0x01010000;
+=======
+        public static final int ListViewScrollLayout=0x7f080004;
+        public static final int ListViewVerticalLayout=0x7f080005;
+        public static final int action_settings=0x7f08000b;
+        public static final int copy=0x7f080009;
+        public static final int delete=0x7f08000a;
+>>>>>>> 976ab5250060c2a9448d520fcc0e481a8379d99e
         public static final int grid_but=0x7f080002;
         public static final int listView1=0x7f080000;
         public static final int list_but=0x7f080001;
-        public static final int move=0x7f080007;
-        public static final int open=0x7f080006;
-        public static final int zip=0x7f080005;
+        public static final int move=0x7f080008;
+        public static final int open=0x7f080007;
+        public static final int view_items=0x7f080003;
+        public static final int zip=0x7f080006;
     }
     public static final class layout {
+<<<<<<< HEAD
         public static final int activity_grid_view=0x7f030000;
         public static final int activity_list_view=0x7f030001;
         public static final int activity_list_view1=0x7f030002;
         public static final int activity_main=0x7f030003;
+=======
+        public static final int activity_list_view=0x7f030000;
+        public static final int activity_list_view1=0x7f030001;
+        public static final int activity_main=0x7f030002;
+        public static final int list_view_items=0x7f030003;
+>>>>>>> 976ab5250060c2a9448d520fcc0e481a8379d99e
         public static final int list_view_sub=0x7f030004;
     }
     public static final class menu {
