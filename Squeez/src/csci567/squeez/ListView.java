@@ -7,10 +7,13 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ public class ListView extends Activity implements OnClickListener {
 		files = new ArrayList<String>();
 		directory = "/";
 		layout = (LinearLayout)findViewById(R.id.ListViewVerticalLayout);
+		registerForContextMenu(layout);
 		
 		Refresh();
 	}
@@ -66,6 +70,43 @@ public class ListView extends Activity implements OnClickListener {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.context_menu, menu);
+	}
+	
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		int position = info.position;
+		if(item.getItemId()==R.id.zip) {
+			//use zip function
+			Toast.makeText(getBaseContext(), "zip selected: ", Toast.LENGTH_LONG).show();
+			return true;
+		}
+		if(item.getItemId()==R.id.open) {
+			//use open function
+			Toast.makeText(getBaseContext(), "open selected: ", Toast.LENGTH_LONG).show();
+			return true;
+		}
+		if(item.getItemId()==R.id.move) {
+			//use move function
+			Toast.makeText(getBaseContext(), "move selected: ", Toast.LENGTH_LONG).show();
+			return true;
+		}
+		if(item.getItemId()==R.id.copy) {
+			//use copy function
+			Toast.makeText(getBaseContext(), "copy selected: ", Toast.LENGTH_LONG).show();
+			return true;
+		}
+		if(item.getItemId()==R.id.delete) {
+			//use delete function
+			Toast.makeText(getBaseContext(), "delete selected: ", Toast.LENGTH_LONG).show();
+			return true;
+		}
+		return super.onContextItemSelected(null);
 	}
 	
 	public void onClick(View v) {
@@ -110,5 +151,6 @@ public class ListView extends Activity implements OnClickListener {
 			Refresh();
 		}
 	}
+	
 
 }
