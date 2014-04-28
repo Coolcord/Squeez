@@ -31,13 +31,13 @@ public class MainActivity extends Activity implements OnClickListener{
 	public void onClick(View v)
 	{
 		Intent list_intent = new Intent(this, ListViewer.class);
-		//Intent grid_intent = new Intent(this, GridViewss);
+		Intent grid_intent = new Intent(this, GridViewer.class);
 		switch(v.getId()) {
 		case R.id.list_but:
 			this.startActivity(list_intent);
 			break;
 		case R.id.grid_but:
-			//this.startActivity(grid_intent);
+			this.startActivity(grid_intent);
 			break;
 
 		}

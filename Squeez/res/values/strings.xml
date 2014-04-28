@@ -8,6 +8,7 @@
     <string name="grid">Grid View</string>
     <string name="title_activity_list_view">ListView</string>
     <string name="title_activity_list_view2">ListView2</string>
+    <string name="title_activity_grid_view">GridView</string>
     <string name="zip">Zip</string>
     <string name="open">Open</string>
     <string name="move">Move</string>

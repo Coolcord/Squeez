@@ -31,6 +31,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="csci567.squeez.MainActivity" />
         </activity>
+         <activity
+            android:name="csci567.squeez.GridViewer"
+            android:label="@string/title_activity_grid_view"
+            android:parentActivityName="csci567.squeez.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="csci567.squeez.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
