@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ListViewer extends Activity implements OnClickListener, OnLongClickListener, OnCheckedChangeListener {
@@ -40,6 +41,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	Button btnRename, btnMove, btnCopy, btnDelete, btnZip, btnUnzip,
 			btnManage, btnArchive;
 	Context context;
+	TextView dir_text;
 	
 	String directory;
 	ArrayList<String> files;
@@ -162,7 +164,8 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		FileManager.List(files, directory);
 		toManage.clear();
 		layout.removeAllViews();
-		
+		dir_text = (TextView) findViewById(R.id.dir_text);
+		dir_text.setText("current directory:" + directory);
 		int i = 0;
 		//This for loop can be used to make clickable objects for each file given
 		for (String fileName : files) {

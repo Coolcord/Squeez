@@ -2,13 +2,38 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:weightSum="11">
 
+    <TextView
+        android:id="@+id/dir_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/d_text"
+        android:layout_weight=".5"/>
+        
+    <ScrollView
+        android:id="@+id/ListViewScrollLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true" 
+        android:layout_weight="8">
+
+        <LinearLayout
+            android:id="@+id/ListViewVerticalLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+    
     <LinearLayout
 	    android:id="@+id/ListViewTopButtonsLayout"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
+	    android:orientation="horizontal" 
+	    android:layout_weight="1.5"
+	    android:layout_gravity="bottom" >
 
         <Button
             android:id="@+id/btnManage"
@@ -85,19 +110,5 @@
 			    android:text="@string/unzip" />
 		    
 		</LinearLayout>
-    
-    <ScrollView
-        android:id="@+id/ListViewScrollLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true" >
-
-        <LinearLayout
-            android:id="@+id/ListViewVerticalLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-        </LinearLayout>
-    </ScrollView>
 
 </LinearLayout>
