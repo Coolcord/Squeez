@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="csci567.squeez.ListView"
+            android:name="csci567.squeez.ListViewer"
             android:label="@string/title_activity_list_view"
             android:parentActivityName="csci567.squeez.MainActivity" >
             <meta-data

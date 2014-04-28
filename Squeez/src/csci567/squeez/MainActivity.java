@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v)
 	{
-		Intent list_intent = new Intent(this, ListView.class);
+		Intent list_intent = new Intent(this, ListViewer.class);
 		//Intent grid_intent = new Intent(this, GridViewss);
 		switch(v.getId()) {
 		case R.id.list_but:
