@@ -2,12 +2,20 @@ package csci567.squeez;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 
 public class ErrorHandler {
 	
 	public static void ShowError(Status status, String fileName, Context context) {
-		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-		alertDialog.setTitle("Error");
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		alertDialogBuilder.setTitle("Error");
+		
+		DialogInterface.OnClickListener errorDiag = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		};
+		alertDialogBuilder.setPositiveButton("Ok", errorDiag);
 		
 		switch (status)
 		{
@@ -15,32 +23,32 @@ public class ErrorHandler {
 				//Nothing to see here
 				return;
 			case DOES_NOT_EXIST:
-				alertDialog.setMessage(fileName + " does not exist!");
+				alertDialogBuilder.setMessage(fileName + " does not exist!");
 				break;
 			case NAME_TAKEN:
-				alertDialog.setMessage("A file by the name of " + fileName + " already exists!");
+				alertDialogBuilder.setMessage("A file by the name of " + fileName + " already exists!");
 				break;
 			case NOT_DIRECTORY:
 			case DESTINATION_NOT_DIRECTORY: //same message
-				alertDialog.setMessage(fileName + " is not a directory!");
+				alertDialogBuilder.setMessage(fileName + " is not a directory!");
 				break;
 			case NOT_FILE:
-				alertDialog.setMessage(fileName + " is not a file!");
+				alertDialogBuilder.setMessage(fileName + " is not a file!");
 				break;
 			case COULD_NOT_DELETE:
-				alertDialog.setMessage("Could not delete " + fileName);
+				alertDialogBuilder.setMessage("Could not delete " + fileName);
 				break;
 			case COULD_NOT_RENAME:
-				alertDialog.setMessage("Could not rename " + fileName);
+				alertDialogBuilder.setMessage("Could not rename " + fileName);
 				break;
 			case COULD_NOT_COPY:
-				alertDialog.setMessage("Could not copy " + fileName);
+				alertDialogBuilder.setMessage("Could not copy " + fileName);
 				break;
 			case COULD_NOT_UNZIP:
-				alertDialog.setMessage("Could not unzip " + fileName);
+				alertDialogBuilder.setMessage("Could not unzip " + fileName);
 				break;
 			case COULD_NOT_ZIP:
-				alertDialog.setMessage("Could not zip " + fileName);
+				alertDialogBuilder.setMessage("Could not zip " + fileName);
 				break;
 			default:
 				assert(false);
@@ -59,6 +67,7 @@ public class ErrorHandler {
 		});
 		*/
 		
+		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
 	}
 }

@@ -112,10 +112,13 @@ public class ArchiveManager {
 		//Build the destination path
 		String[] name = archive.split("/");
 		String destination = "";
-		if (name.length > 2) {
+		if (name.length > 1) {
 			for (int i = 0; i < name.length-1; i++) {
-				destination += "/" + name[i];
+				if (name[i].length() > 0) {
+					destination += "/" + name[i];
+				}
 			}
+			destination += "/";
 		} else {
 			destination = "/";
 		}
@@ -133,10 +136,13 @@ public class ArchiveManager {
 		//Build the destination path
 		String[] name = archive.split("/");
 		String destination = "";
-		if (name.length > 2) {
+		if (name.length > 1) {
 			for (int i = 0; i < name.length-1; i++) {
-				destination += "/" + name[i];
+				if (name[i].length() > 0) {
+					destination += "/" + name[i];
+				}
 			}
+			destination += "/";
 		} else {
 			destination = "/";
 		}

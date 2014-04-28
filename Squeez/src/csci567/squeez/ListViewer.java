@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
@@ -233,6 +235,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	@Override
 	public void onClick(View v) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		AlertDialog alertDialog;
 		switch (v.getId())
 		{
 			case R.id.btnManage:
@@ -252,6 +255,35 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				}
 				break;
 			case R.id.btnRename:
+				alertDialogBuilder = new AlertDialog.Builder(this);                 
+				alertDialogBuilder.setTitle("Rename");  
+				alertDialogBuilder.setMessage("Enter a new name: ");                
+				final EditText input = new EditText(this); 
+			 	DialogInterface.OnClickListener renameDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							String newName = input.getText().toString();
+							Status s = Status.OK;
+							for (String file : toManage) {
+								s = FileManager.Rename(file, newName);
+								if (s != Status.OK) {
+									ErrorHandler.ShowError(s, file, context);
+									break;
+								}
+							}
+							if (s == Status.OK) {
+								Toast.makeText(context, "File Renamed", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setView(input);
+				alertDialogBuilder.setPositiveButton("Ok", renameDiag);
+				alertDialogBuilder.setNegativeButton("Cancel", renameDiag);
+			    alertDialog = alertDialogBuilder.create();
+				alertDialog.show();				
 				break;
 			case R.id.btnMove:
 				break;
@@ -264,21 +296,24 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == DialogInterface.BUTTON_POSITIVE) {
+							Status s = Status.OK;
 							for (String file : toManage) {
-								Status s = FileManager.Delete(file);
+								s = FileManager.Delete(file);
 								if (s != Status.OK) {
 									ErrorHandler.ShowError(s, file, context);
 									break;
 								}
 							}
-							Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
+							if (s == Status.OK) {
+								Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
+							}
 							Refresh();
 						}
 					}
 				};
 				alertDialogBuilder.setPositiveButton("Yes", deleteDiag);
 				alertDialogBuilder.setNegativeButton("No", deleteDiag);
-				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog = alertDialogBuilder.create();
 				alertDialog.show();
 				break;
 			case R.id.btnZip:

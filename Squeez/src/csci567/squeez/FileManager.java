@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 public class FileManager {
 	
@@ -55,10 +55,13 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		if (name.length > 2) {
+		if (name.length > 1) {
 			for (int i = 0; i < name.length-1; i++) {
-				folder += "/" + name[i];
+				if (name[i].length() > 0) {
+					folder += "/" + name[i];
+				}
 			}
+			folder += "/";
 		} else {
 			folder = "/";
 		}
@@ -100,10 +103,13 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		if (name.length > 2) {
+		if (name.length > 1) {
 			for (int i = 0; i < name.length-1; i++) {
-				folder += "/" + name[i];
+				if (name[i].length() > 0) {
+					folder += "/" + name[i];
+				}
 			}
+			folder += "/";
 		} else {
 			folder = "/";
 		}
@@ -121,10 +127,13 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String destination = "";
-		if (name.length > 2) {
+		if (name.length > 1) {
 			for (int i = 0; i < name.length-1; i++) {
-				destination += "/" + name[i];
+				if (name[i].length() > 0) {
+					destination += "/" + name[i];
+				}
 			}
+			destination += "/";
 		} else {
 			destination = "/";
 		}
@@ -157,10 +166,13 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		if (name.length > 2) {
+		if (name.length > 1) {
 			for (int i = 0; i < name.length-1; i++) {
-				folder += "/" + name[i];
+				if (name[i].length() > 0) {
+					folder += "/" + name[i];
+				}
 			}
+			folder += "/";
 		} else {
 			folder = "/";
 		}
@@ -188,10 +200,13 @@ public class FileManager {
 			//Build the destination path
 			String[] name = source.split("/");
 			String path = "";
-			if (name.length > 2) {
+			if (name.length > 1) {
 				for (int i = 0; i < name.length-1; i++) {
-					path += "/" + name[i];
+					if (name[i].length() > 0) {
+						path += "/" + name[i];
+					}
 				}
+				path += "/";
 			} else {
 				path = "/";
 			}
@@ -250,10 +265,13 @@ public class FileManager {
 		//Build the destination path
 		String[] name = source.split("/");
 		String folder = "";
-		if (name.length > 2) {
+		if (name.length > 1) {
 			for (int i = 0; i < name.length-1; i++) {
-				folder += "/" + name[i];
+				if (name[i].length() > 0) {
+					folder += "/" + name[i];
+				}
 			}
+			folder += "/";
 		} else {
 			folder = "/";
 		}
