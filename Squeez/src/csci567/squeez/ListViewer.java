@@ -34,13 +34,14 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	public static final int BUTTON_ID_OFFSET = 8192000;
 	public static final int CHECKBOX_ID_OFFSET = BUTTON_ID_OFFSET / 2;
 	
-	Button btnMove, btnCopy, btnDelete, btnZip, btnUnzip;
+	Button btnRename, btnMove, btnCopy, btnDelete, btnZip, btnUnzip,
+			btnManage, btnArchive;
 	Context context;
 	
 	String directory;
 	ArrayList<String> files;
 	ArrayList<String> toManage;
-	LinearLayout layout;
+	LinearLayout layout, manageLayout, archiveLayout;
 	private ListView Lview;
 	String [] list_items;
 	@Override
@@ -52,15 +53,23 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		files = new ArrayList<String>();
 		toManage = new ArrayList<String>();
 		directory = "/";
-		layout = (LinearLayout)findViewById(R.id.ListViewVerticalLayout);
+		layout = (LinearLayout) findViewById(R.id.ListViewVerticalLayout);
+		manageLayout = (LinearLayout)findViewById(R.id.ListViewManageButtonsLayout);
+		archiveLayout = (LinearLayout)findViewById(R.id.ListViewArchiveButtonsLayout);
 		//Lview = (ListView) findViewById(R.id.listView1);
 		
+		btnManage = (Button) findViewById(R.id.btnManage);
+		btnArchive = (Button) findViewById(R.id.btnArchive);
+		btnRename = (Button) findViewById(R.id.btnRename);
 		btnMove = (Button) findViewById(R.id.btnMove);
 		btnCopy = (Button) findViewById(R.id.btnCopy);
 		btnDelete = (Button) findViewById(R.id.btnDelete);
 		btnZip = (Button) findViewById(R.id.btnZip);
 		btnUnzip = (Button) findViewById(R.id.btnUnzip);
 		
+		btnManage.setOnClickListener(this);
+		btnArchive.setOnClickListener(this);
+		btnRename.setOnClickListener(this);
 		btnMove.setOnClickListener(this);
 		btnCopy.setOnClickListener(this);
 		btnDelete.setOnClickListener(this);
@@ -226,6 +235,24 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		switch (v.getId())
 		{
+			case R.id.btnManage:
+				archiveLayout.setVisibility(View.GONE);
+				if (manageLayout.getVisibility() == View.GONE) {
+					manageLayout.setVisibility(View.VISIBLE);
+				} else {
+					manageLayout.setVisibility(View.GONE);
+				}
+				break;
+			case R.id.btnArchive:
+				manageLayout.setVisibility(View.GONE);
+				if (archiveLayout.getVisibility() == View.GONE) {
+					archiveLayout.setVisibility(View.VISIBLE);
+				} else {
+					archiveLayout.setVisibility(View.GONE);
+				}
+				break;
+			case R.id.btnRename:
+				break;
 			case R.id.btnMove:
 				break;
 			case R.id.btnCopy:

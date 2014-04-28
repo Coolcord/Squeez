@@ -15,6 +15,9 @@
     <string name="copy">Copy</string>
     <string name="delete">Delete</string>
     <string name="unzip">Unzip</string>
+    <string name="manage">Manage</string>
+    <string name="archive">Archive</string>
+    <string name="rename">Rename</string>
     
 
 </resources>
