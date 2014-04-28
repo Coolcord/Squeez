@@ -258,6 +258,14 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				}
 				break;
 			case R.id.btnRename:
+				//Make sure that the proper number of files have been selected
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				} else if (toManage.size() > 1) {
+					ErrorHandler.ShowError(Status.CAN_ONLY_RENAME_ONE, "", context);
+					break;
+				}
 				alertDialogBuilder = new AlertDialog.Builder(this);                 
 				alertDialogBuilder.setTitle("Rename");  
 				alertDialogBuilder.setMessage("Enter a new name: ");                
@@ -289,10 +297,80 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialog.show();
 				break;
 			case R.id.btnMove:
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				}
+				alertDialogBuilder = new AlertDialog.Builder(this);                 
+				alertDialogBuilder.setTitle("Rename");  
+				alertDialogBuilder.setMessage("Enter a new name: ");                
+				final EditText moveInput = new EditText(this); 
+			 	DialogInterface.OnClickListener moveDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							String newName = moveInput.getText().toString();
+							Status s = Status.OK;
+							for (String file : toManage) {
+								s = FileManager.Move(file, directory + newName);
+								if (s != Status.OK) {
+									ErrorHandler.ShowError(s, file, context);
+									break;
+								}
+							}
+							if (s == Status.OK) {
+								Toast.makeText(context, "File Moved", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setView(moveInput);
+				alertDialogBuilder.setPositiveButton("Ok", moveDiag);
+				alertDialogBuilder.setNegativeButton("Cancel", moveDiag);
+			    alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
 				break;
 			case R.id.btnCopy:
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				}
+				alertDialogBuilder = new AlertDialog.Builder(this);                 
+				alertDialogBuilder.setTitle("Rename");  
+				alertDialogBuilder.setMessage("Enter a new name: ");                
+				final EditText copyInput = new EditText(this); 
+			 	DialogInterface.OnClickListener copyDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							String newName = copyInput.getText().toString();
+							Status s = Status.OK;
+							for (String file : toManage) {
+								s = FileManager.Copy(file, directory + newName);
+								if (s != Status.OK) {
+									ErrorHandler.ShowError(s, file, context);
+									break;
+								}
+							}
+							if (s == Status.OK) {
+								Toast.makeText(context, "File Copied", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setView(copyInput);
+				alertDialogBuilder.setPositiveButton("Ok", copyDiag);
+				alertDialogBuilder.setNegativeButton("Cancel", copyDiag);
+			    alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
 				break;
 			case R.id.btnDelete:
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				}
 				alertDialogBuilder.setTitle("Delete");
 				alertDialogBuilder.setMessage("Are you sure you want to delete the selected files?");
 				DialogInterface.OnClickListener deleteDiag = new DialogInterface.OnClickListener() {
@@ -320,6 +398,10 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialog.show();
 				break;
 			case R.id.btnZip:
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				}
 				alertDialogBuilder = new AlertDialog.Builder(this);                 
 				alertDialogBuilder.setTitle("Zip");  
 				alertDialogBuilder.setMessage("Enter a name: ");                
@@ -347,6 +429,10 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialog.show();
 				break;
 			case R.id.btnUnzip:
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				}
 				break;
 			default:
 				Button btn = (Button)v;
