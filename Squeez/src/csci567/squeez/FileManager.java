@@ -336,8 +336,8 @@ public class FileManager {
             // Excel file
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.ms-excel");
         } else if (extension == ".zip" || extension == ".rar") {
-            // WAV audio file
-            intent.setDataAndType(Uri.fromFile(file), "application/x-wav");
+            // Archive file
+            intent.setDataAndType(Uri.fromFile(file), "application/zip");
         } else if (extension == ".rtf") {
             // RTF file
             intent.setDataAndType(Uri.fromFile(file), "application/rtf");
