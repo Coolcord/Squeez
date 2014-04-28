@@ -37,6 +37,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	public static final int BUTTON_ID_OFFSET = 8192000;
 	public static final int CHECKBOX_ID_OFFSET = BUTTON_ID_OFFSET / 2;
 	public static final int HOLDER_ID_OFFSET = BUTTON_ID_OFFSET * 2;
+	public static final int IMAGE_ID_OFFSET = BUTTON_ID_OFFSET * 4;
 	
 	Button btnRename, btnMove, btnCopy, btnDelete, btnZip, btnUnzip,
 			btnManage, btnArchive;
@@ -180,6 +181,8 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 			} else {
 				imFile.setBackgroundResource(R.drawable.file);
 			}
+			imFile.setId(IMAGE_ID_OFFSET + i);
+			imFile.setOnClickListener(this);
 			Button btnFile = new Button(this);
 			btnFile.setId(BUTTON_ID_OFFSET + i);
 			btnFile.setText(fileName);
@@ -476,17 +479,27 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialog.show();
 				break;
 			default:
-				Button btn = (Button)v;
-			    String selection = btn.getText().toString();
-			    
-			    //Load the new Directory
-			    if (selection.charAt(selection.length() - 1) == '/') {
-				    directory += selection;
-				    Refresh();
-				} else { //treat as a file
-					FileManager.Open(directory + selection, this);
+				String selection;
+				if (v.getId() >= IMAGE_ID_OFFSET) {
+					ImageView image = (ImageView)v;
+					int id = image.getId();
+					id -= IMAGE_ID_OFFSET;
+					id += BUTTON_ID_OFFSET;
+					Button btn = (Button) findViewById(id);
+					selection = btn.getText().toString();
+				} else { //assume button
+					Button btn = (Button)v;
+					selection = btn.getText().toString();
 				}
-			    break;
+				    
+				    //Load the new Directory
+				    if (selection.charAt(selection.length() - 1) == '/') {
+					    directory += selection;
+					    Refresh();
+					} else { //treat as a file
+						FileManager.Open(directory + selection, this);
+					}
+				    break;
 		}
 	}
 	
