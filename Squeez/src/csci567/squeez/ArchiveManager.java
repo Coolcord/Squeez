@@ -120,8 +120,7 @@ public class ArchiveManager {
 		return Status.OK;
 	}
 	
-	public static Status Unzip(ArrayList<String> files, String archive) {
-		assert(files != null);
+	public static Status Unzip(String archive) {
 		
 		//Build the destination path
 		String[] name = archive.split("/");
@@ -137,12 +136,11 @@ public class ArchiveManager {
 			destination = "/";
 		}
 		
-		return Unzip(files, archive, destination); //unzip to current directory
+		return Unzip(archive, destination); //unzip to current directory
 	}
 	
-	public static Status Unzip(ArrayList<String> files, String archive, String destination) {
+	public static Status Unzip(String archive, String destination) {
 		assert(archive != destination);
-		assert(files != null);
 		
 		//Make sure the archive exists
 		File archiveFile = new File(archive);

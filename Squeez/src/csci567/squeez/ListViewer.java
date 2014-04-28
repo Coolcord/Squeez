@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -429,10 +428,43 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialog.show();
 				break;
 			case R.id.btnUnzip:
+				//Make sure that the proper number of files have been selected
 				if (toManage.size() <= 0) {
 					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
 					break;
+				} else if (toManage.size() > 1) {
+					ErrorHandler.ShowError(Status.CAN_ONLY_RENAME_ONE, "", context);
+					break;
 				}
+				alertDialogBuilder = new AlertDialog.Builder(this);                 
+				alertDialogBuilder.setTitle("Rename");  
+				alertDialogBuilder.setMessage("Enter a new name: ");                
+				final EditText unzipInput = new EditText(this); 
+			 	DialogInterface.OnClickListener unzipDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							String newName = unzipInput.getText().toString();
+							Status s = Status.OK;
+							for (String file : toManage) {
+								s = ArchiveManager.Unzip(file, directory + newName);
+								if (s != Status.OK) {
+									ErrorHandler.ShowError(s, file, context);
+									break;
+								}
+							}
+							if (s == Status.OK) {
+								Toast.makeText(context, "File Renamed", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setView(unzipInput);
+				alertDialogBuilder.setPositiveButton("Ok", unzipDiag);
+				alertDialogBuilder.setNegativeButton("Cancel", unzipDiag);
+			    alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
 				break;
 			default:
 				Button btn = (Button)v;
