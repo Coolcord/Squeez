@@ -27,20 +27,20 @@ public final class R {
     }
     public static final class id {
         public static final int LinearLayout1=0x7f080000;
-        public static final int ListViewArchiveButtonsLayout=0x7f08000c;
-        public static final int ListViewManageButtonsLayout=0x7f080007;
+        public static final int ListViewArchiveButtonsLayout=0x7f080009;
+        public static final int ListViewManageButtonsLayout=0x7f080004;
         public static final int ListViewScrollLayout=0x7f080002;
-        public static final int ListViewTopButtonsLayout=0x7f080004;
+        public static final int ListViewTopButtonsLayout=0x7f08000c;
         public static final int ListViewVerticalLayout=0x7f080003;
         public static final int action_settings=0x7f080016;
-        public static final int btnArchive=0x7f080006;
-        public static final int btnCopy=0x7f08000a;
-        public static final int btnDelete=0x7f08000b;
-        public static final int btnManage=0x7f080005;
-        public static final int btnMove=0x7f080009;
-        public static final int btnRename=0x7f080008;
-        public static final int btnUnzip=0x7f08000e;
-        public static final int btnZip=0x7f08000d;
+        public static final int btnArchive=0x7f08000e;
+        public static final int btnCopy=0x7f080007;
+        public static final int btnDelete=0x7f080008;
+        public static final int btnManage=0x7f08000d;
+        public static final int btnMove=0x7f080006;
+        public static final int btnRename=0x7f080005;
+        public static final int btnUnzip=0x7f08000b;
+        public static final int btnZip=0x7f08000a;
         public static final int copy=0x7f080014;
         public static final int delete=0x7f080015;
         public static final int dir_text=0x7f080001;

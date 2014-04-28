@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" 
-    android:weightSum="11">
+    >
 
     <TextView
         android:id="@+id/dir_text"
@@ -27,29 +27,7 @@
         </LinearLayout>
     </ScrollView>
     
-    <LinearLayout
-	    android:id="@+id/ListViewTopButtonsLayout"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" 
-	    android:layout_weight="1.5"
-	    android:layout_gravity="bottom" >
-
-        <Button
-            android:id="@+id/btnManage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:text="@string/manage" />
-
-        <Button
-            android:id="@+id/btnArchive"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:text="@string/archive" />
-        
-	</LinearLayout>
+    
 
    	<LinearLayout
    	    android:id="@+id/ListViewManageButtonsLayout"
@@ -110,5 +88,29 @@
 			    android:text="@string/unzip" />
 		    
 		</LinearLayout>
+		
+	   <LinearLayout
+	    android:id="@+id/ListViewTopButtonsLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" 
+
+	    android:layout_gravity="bottom" >
+
+        <Button
+            android:id="@+id/btnManage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="@string/manage" />
+
+        <Button
+            android:id="@+id/btnArchive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="@string/archive" />
+        
+	</LinearLayout>
 
 </LinearLayout>
