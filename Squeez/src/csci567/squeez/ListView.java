@@ -27,12 +27,12 @@ public class ListView extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_view_sub);
+		//setContentView(R.layout.list_view_sub);
 		//String[] values = new String[] { "use", "get", "file", "function" };
 		
 		files = new ArrayList<String>();
 		directory = "/";
-		layout = (LinearLayout)findViewById(R.id.ListViewVerticalLayout);
+		layout = (LinearLayout)findViewById(R.id.ListViewScrollLayout);
 		registerForContextMenu(layout);
 		
 		Refresh();

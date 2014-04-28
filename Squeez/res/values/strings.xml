@@ -14,6 +14,7 @@
     <string name="move">Move</string>
     <string name="copy">Copy</string>
     <string name="delete">Delete</string>
+    <string name="unzip">Unzip</string>
     
 
 </resources>

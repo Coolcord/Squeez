@@ -4,31 +4,42 @@ import java.util.ArrayList;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-public class ListViewer extends Activity {
+public class ListViewer extends Activity implements OnClickListener, OnLongClickListener, OnCheckedChangeListener {
 
+	public static final int BUTTON_ID_OFFSET = 8192000;
+	public static final int CHECKBOX_ID_OFFSET = BUTTON_ID_OFFSET / 2;
+	
+	Button btnMove, btnCopy, btnDelete, btnZip, btnUnzip;
+	Context context;
+	
 	String directory;
 	ArrayList<String> files;
+	ArrayList<String> toManage;
 	LinearLayout layout;
 	private ListView Lview;
 	String [] list_items;
@@ -36,12 +47,25 @@ public class ListViewer extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list_view);
-		//String[] values = new String[] { "use", "get", "file", "function" };
+		context = this;
 		
 		files = new ArrayList<String>();
+		toManage = new ArrayList<String>();
 		directory = "/";
-//		layout = (LinearLayout)findViewById(R.id.ListViewVerticalLayout);
-		Lview = (ListView) findViewById(R.id.listView1);
+		layout = (LinearLayout)findViewById(R.id.ListViewVerticalLayout);
+		//Lview = (ListView) findViewById(R.id.listView1);
+		
+		btnMove = (Button) findViewById(R.id.btnMove);
+		btnCopy = (Button) findViewById(R.id.btnCopy);
+		btnDelete = (Button) findViewById(R.id.btnDelete);
+		btnZip = (Button) findViewById(R.id.btnZip);
+		btnUnzip = (Button) findViewById(R.id.btnUnzip);
+		
+		btnMove.setOnClickListener(this);
+		btnCopy.setOnClickListener(this);
+		btnDelete.setOnClickListener(this);
+		btnZip.setOnClickListener(this);
+		btnUnzip.setOnClickListener(this);
 		
 		Refresh();
 	}
@@ -87,9 +111,12 @@ public class ListViewer extends Activity {
 		inflater.inflate(R.menu.context_menu, menu);
 	}
 	
+	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		Toast.makeText(getBaseContext(), "EEYUP!", Toast.LENGTH_LONG).show();
+		
 		int position = info.position;
 		if(item.getItemId()==R.id.zip) {
 			//use zip function
@@ -119,22 +146,42 @@ public class ListViewer extends Activity {
 		return true;
 	}
 	
-	/*public void onClick(View v) {
-		Button btn = (Button)v;
-	    String folder = btn.getText().toString();
-	    
-	    //Load the new Directory
-	    if (folder.charAt(folder.length() - 1) == '/') {
-		    directory += folder;
-		    Refresh();
-		}
-	}*/
-	
-//	public void Item_click(View v) {//replaces onclick function
-		
-	//}
-	
 	public void Refresh() {
+		FileManager.List(files, directory);
+		toManage.clear();
+		layout.removeAllViews();
+		
+		int i = 0;
+		//This for loop can be used to make clickable objects for each file given
+		for (String fileName : files) {
+			LinearLayout fileHolder = new LinearLayout(this);
+			fileHolder.setOrientation(LinearLayout.HORIZONTAL);
+			CheckBox cbFile = new CheckBox(this);
+			Button btnFile = new Button(this);
+			btnFile.setId(BUTTON_ID_OFFSET + i);
+			btnFile.setText(fileName);
+			btnFile.setBackgroundColor(Color.BLACK);
+			btnFile.setTextColor(Color.WHITE);
+			btnFile.setGravity(Gravity.LEFT);
+			btnFile.setOnClickListener(this);
+			btnFile.setOnLongClickListener(this);
+			LayoutParams cbFileLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.01f);
+			LayoutParams btnFileLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.99f);
+			cbFile.setLayoutParams(cbFileLayoutParams);
+			cbFile.setId(CHECKBOX_ID_OFFSET + i);
+			cbFile.setOnCheckedChangeListener(this);
+			btnFile.setLayoutParams(btnFileLayoutParams);
+			fileHolder.addView(cbFile);
+			fileHolder.addView(btnFile);
+			layout.addView(fileHolder);
+			registerForContextMenu(btnFile);
+			i++;
+		}
+		
+		
+		
+		
+		/*
 		FileManager.List(files, directory);
 		//Lview.removeAllViews();
 		
@@ -160,6 +207,7 @@ public class ListViewer extends Activity {
 			}
 			
 		});
+		*/
 /*		Lview.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
@@ -171,13 +219,65 @@ public class ListViewer extends Activity {
 			}
 			
 		});*/
-		//This for loop can be used to make clickable objects for each file given
-		/*for (String fileName : files) {
-			Button btnFile = new Button(getApplicationContext());	
-			btnFile.setText(fileName);
-			btnFile.setOnClickListener(this);
-			layout.addView(btnFile);
-		}*/
+	}
+	
+	@Override
+	public void onClick(View v) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		switch (v.getId())
+		{
+			case R.id.btnMove:
+				break;
+			case R.id.btnCopy:
+				break;
+			case R.id.btnDelete:
+				alertDialogBuilder.setTitle("Delete");
+				alertDialogBuilder.setMessage("Are you sure you want to delete the selected files?");
+				DialogInterface.OnClickListener deleteDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							for (String file : toManage) {
+								Status s = FileManager.Delete(file);
+								if (s != Status.OK) {
+									ErrorHandler.ShowError(s, file, context);
+									break;
+								}
+							}
+							Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setPositiveButton("Yes", deleteDiag);
+				alertDialogBuilder.setNegativeButton("No", deleteDiag);
+				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+				break;
+			case R.id.btnZip:
+				break;
+			case R.id.btnUnzip:
+				break;
+			default:
+				Button btn = (Button)v;
+			    String selection = btn.getText().toString();
+			    
+			    //Load the new Directory
+			    if (selection.charAt(selection.length() - 1) == '/') {
+				    directory += selection;
+				    Refresh();
+				} else { //treat as a file
+					FileManager.Open(selection, this);
+				}
+			    break;
+		}
+	}
+	
+	@Override
+	public boolean onLongClick(View v) {
+		Toast.makeText(getBaseContext(), "long click: ", Toast.LENGTH_LONG).show();
+		//registerForContextMenu(v);
+		return true;
 	}
 	
 	@Override
@@ -198,6 +298,18 @@ public class ListViewer extends Activity {
 			Refresh();
 		}
 	}
-	
 
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		
+		int id = buttonView.getId();
+		id -= CHECKBOX_ID_OFFSET;
+		id += BUTTON_ID_OFFSET;
+		Button btn = (Button) findViewById(id);
+		if (isChecked) {
+			toManage.add(directory + btn.getText());
+		} else {
+			toManage.remove(directory + btn.getText());
+		}	
+	}
 }
