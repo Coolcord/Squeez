@@ -35,6 +35,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 
 	public static final int BUTTON_ID_OFFSET = 8192000;
 	public static final int CHECKBOX_ID_OFFSET = BUTTON_ID_OFFSET / 2;
+	public static final int HOLDER_ID_OFFSET = BUTTON_ID_OFFSET * 2;
 	
 	Button btnRename, btnMove, btnCopy, btnDelete, btnZip, btnUnzip,
 			btnManage, btnArchive;
@@ -167,6 +168,8 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		for (String fileName : files) {
 			LinearLayout fileHolder = new LinearLayout(this);
 			fileHolder.setOrientation(LinearLayout.HORIZONTAL);
+			fileHolder.setBackgroundColor(Color.BLACK);
+			fileHolder.setId(HOLDER_ID_OFFSET + i);
 			CheckBox cbFile = new CheckBox(this);
 			Button btnFile = new Button(this);
 			btnFile.setId(BUTTON_ID_OFFSET + i);
@@ -389,14 +392,22 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		
-		int id = buttonView.getId();
-		id -= CHECKBOX_ID_OFFSET;
-		id += BUTTON_ID_OFFSET;
-		Button btn = (Button) findViewById(id);
+		int btnId = buttonView.getId();
+		btnId -= CHECKBOX_ID_OFFSET;
+		btnId += BUTTON_ID_OFFSET;
+		int holderId = buttonView.getId();
+		holderId -= CHECKBOX_ID_OFFSET;
+		holderId += HOLDER_ID_OFFSET;
+		Button btn = (Button) findViewById(btnId);
+		LinearLayout fileHolder = (LinearLayout) findViewById(holderId);
 		if (isChecked) {
 			toManage.add(directory + btn.getText());
+			btn.setBackgroundColor(Color.BLUE);
+			fileHolder.setBackgroundColor(Color.BLUE);
 		} else {
 			toManage.remove(directory + btn.getText());
+			btn.setBackgroundColor(Color.BLACK);
+			fileHolder.setBackgroundColor(Color.BLACK);
 		}	
 	}
 }
