@@ -211,9 +211,7 @@ public class FileManager {
 				path = "/";
 			}
 			newFile = new File(path);
-			if (!newFile.mkdirs()) { //create the missing folders
-				return Status.COULD_NOT_COPY;
-			}
+			newFile.mkdirs();
 		}
 		
 		//Prepare copy streams

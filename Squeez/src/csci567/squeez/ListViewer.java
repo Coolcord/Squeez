@@ -301,7 +301,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 					break;
 				}
 				alertDialogBuilder = new AlertDialog.Builder(this);                 
-				alertDialogBuilder.setTitle("Rename");  
+				alertDialogBuilder.setTitle("Move");  
 				alertDialogBuilder.setMessage("Enter a new name: ");                
 				final EditText moveInput = new EditText(this); 
 			 	DialogInterface.OnClickListener moveDiag = new DialogInterface.OnClickListener() {
@@ -336,7 +336,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 					break;
 				}
 				alertDialogBuilder = new AlertDialog.Builder(this);                 
-				alertDialogBuilder.setTitle("Rename");  
+				alertDialogBuilder.setTitle("Copy");  
 				alertDialogBuilder.setMessage("Enter a new name: ");                
 				final EditText copyInput = new EditText(this); 
 			 	DialogInterface.OnClickListener copyDiag = new DialogInterface.OnClickListener() {
