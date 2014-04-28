@@ -8,6 +8,11 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.webkit.MimeTypeMap;
+
 public class FileManager {
 	
 	public static Status List(ArrayList<String> files, String directory) {
@@ -289,21 +294,57 @@ public class FileManager {
 		}
 	}
 	
-	public static Status Open(String filePath) {
+	public static Status Open(String filePath, Context context) {
 		
-		//Use intents to open a file with a default application
-		/*
 		Intent intent = new Intent();
 		intent.setAction(android.content.Intent.ACTION_VIEW);
-		File file = new File("/sdcard/test.mp4");
-		intent.setDataAndType(Uri.fromFile(file), "video/*");
-		startActivity(intent);
-		*/
-		//"video/*"
-		//"audio/*"
-		//"text/*"
-		assert(false);
+		File file = new File(filePath);
+		if (!file.exists()) {
+			return Status.DOES_NOT_EXIST;
+		}
+        String name[] = filePath.split("\\.");
+        String extension = name[name.length-1];
+        
+        //List of file types from:
+        //http://www.androidsnippets.com/open-any-type-of-file-with-default-intent
+        if (extension == ".doc" || extension == ".docx") {
+            // Word document
+            intent.setDataAndType(Uri.fromFile(file), "application/msword");
+        } else if (extension == ".pdf") {
+            // PDF file
+            intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+        } else if (extension == ".ppt" || extension == ".pptx") {
+            // Powerpoint file
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.ms-powerpoint");
+        } else if (extension == ".xls" || extension == ".xlsx") {
+            // Excel file
+            intent.setDataAndType(Uri.fromFile(file), "application/vnd.ms-excel");
+        } else if (extension == ".zip" || extension == ".rar") {
+            // WAV audio file
+            intent.setDataAndType(Uri.fromFile(file), "application/x-wav");
+        } else if (extension == ".rtf") {
+            // RTF file
+            intent.setDataAndType(Uri.fromFile(file), "application/rtf");
+        } else if (extension == ".wav" || extension == ".mp3") {
+            // WAV audio file
+            intent.setDataAndType(Uri.fromFile(file), "audio/x-wav");
+        } else if (extension == ".gif") {
+            // GIF file
+            intent.setDataAndType(Uri.fromFile(file), "image/gif");
+        } else if (extension == ".jpg" || extension == ".jpeg" || extension == ".png") {
+            // JPG file
+            intent.setDataAndType(Uri.fromFile(file), "image/jpeg");
+        } else if (extension == ".txt") {
+            // Text file
+            intent.setDataAndType(Uri.fromFile(file), "text/plain");
+        } else if (extension == ".3gp" || extension == ".mpg" || extension == ".mpeg" || extension == ".mpe" || extension == ".mp4" || extension == ".avi") {
+            // Video files
+            intent.setDataAndType(Uri.fromFile(file), "video/*");
+        } else {
+            // Unknown file
+            intent.setDataAndType(Uri.fromFile(file), "*/*");
+        }
+		context.startActivity(intent);
 		return Status.OK;
 	}
-	
 }
