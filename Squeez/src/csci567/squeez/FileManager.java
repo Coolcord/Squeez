@@ -358,9 +358,9 @@ public class FileManager {
             intent.setDataAndType(Uri.fromFile(file), "video/*");
         } else {
             // Unknown file
-            intent.setDataAndType(Uri.fromFile(file), "*/*");
+            intent.setDataAndType(Uri.fromFile(file), "text/plain");
         }
-		context.startActivity(intent);
+        context.startActivity(intent);
 		return Status.OK;
 	}
 }

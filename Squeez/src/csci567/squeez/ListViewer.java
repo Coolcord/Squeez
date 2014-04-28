@@ -481,7 +481,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				    directory += selection;
 				    Refresh();
 				} else { //treat as a file
-					FileManager.Open(selection, this);
+					FileManager.Open(directory + selection, this);
 				}
 			    break;
 		}
