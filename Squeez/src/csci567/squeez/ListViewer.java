@@ -25,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
@@ -170,6 +171,12 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 			fileHolder.setBackgroundColor(Color.BLACK);
 			fileHolder.setId(HOLDER_ID_OFFSET + i);
 			CheckBox cbFile = new CheckBox(this);
+			ImageView imFile = new ImageView(this);
+			if (fileName.charAt(fileName.length() - 1) == '/') {
+				imFile.setBackgroundResource(R.drawable.folder);
+			} else {
+				imFile.setBackgroundResource(R.drawable.file);
+			}
 			Button btnFile = new Button(this);
 			btnFile.setId(BUTTON_ID_OFFSET + i);
 			btnFile.setText(fileName);
@@ -184,7 +191,9 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 			cbFile.setId(CHECKBOX_ID_OFFSET + i);
 			cbFile.setOnCheckedChangeListener(this);
 			btnFile.setLayoutParams(btnFileLayoutParams);
+			fileHolder.setPadding(0, 5, 0, 5);
 			fileHolder.addView(cbFile);
+			fileHolder.addView(imFile);
 			fileHolder.addView(btnFile);
 			layout.addView(fileHolder);
 			registerForContextMenu(btnFile);
