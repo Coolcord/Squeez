@@ -18,7 +18,7 @@
     <string name="manage">Manage</string>
     <string name="archive">Archive</string>
     <string name="rename">Rename</string>
-    <string name="d_text">Current Directory</string>
+    <string name="d_text">Current Directory: </string>
     
 
 </resources>

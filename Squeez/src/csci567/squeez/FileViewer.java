@@ -185,7 +185,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			toManage.clear();
 			layout.removeAllViews();
 			dir_text = (TextView) findViewById(R.id.dir_text);
-			dir_text.setText("current directory:" + directory);
+			dir_text.setText(getResources().getString(R.string.d_text) + directory);
 			
 			rootLayout.setLayoutParams(rootLayoutParams);
 			rootLayout.setOrientation(LinearLayout.VERTICAL);
@@ -235,7 +235,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			toManage.clear();
 			layout.removeAllViews();
 			dir_text = (TextView) findViewById(R.id.dir_text);
-			dir_text.setText("current directory:" + directory);
+			dir_text.setText(getResources().getString(R.string.d_text) + directory);
 			
 			//Determine how many columns to use based upon screen width
 			int maxCols = 0;
