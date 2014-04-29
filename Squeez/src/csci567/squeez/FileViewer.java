@@ -762,6 +762,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			if (!selectMode) {
 				selectMode = true;
 				Toast.makeText(getBaseContext(), "Select Mode Enabled", Toast.LENGTH_LONG).show();
+				onClick(v);
 			} else {
 				selectMode = false;
 				Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
@@ -775,7 +776,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	
 	@Override
 	public void onBackPressed() {
-		if (directory == "/") {
+		if (selectMode) {
+			selectMode = false;
+			Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
+		} else if (directory == "/") {
 			super.onBackPressed();
 		} else {
 			//Build the destination path
