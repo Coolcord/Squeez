@@ -72,6 +72,12 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		toManage = new ArrayList<String>();
 		storedManage = new ArrayList<String>();
 		directory = "/";
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
 		layout = (ScrollView) findViewById(R.id.ViewScrollLayout);
 		manageLayout = (LinearLayout)findViewById(R.id.ViewManageButtonsLayout);
 		archiveLayout = (LinearLayout)findViewById(R.id.ViewArchiveButtonsLayout);
