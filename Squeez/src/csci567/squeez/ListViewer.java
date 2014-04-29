@@ -43,10 +43,11 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 			btnManage, btnArchive;
 	Context context;
 	TextView dir_text;
+	Boolean getFolderMode;
 	
 	String directory;
 	ArrayList<String> files;
-	ArrayList<String> toManage;
+	ArrayList<String> toManage, storedManage;
 	LinearLayout layout, manageLayout, archiveLayout;
 	private ListView Lview;
 	String [] list_items;
@@ -56,8 +57,10 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		setContentView(R.layout.activity_list_view);
 		context = this;
 		
+		getFolderMode = false;
 		files = new ArrayList<String>();
 		toManage = new ArrayList<String>();
+		storedManage = new ArrayList<String>();
 		directory = "/";
 		layout = (LinearLayout) findViewById(R.id.ListViewVerticalLayout);
 		manageLayout = (LinearLayout)findViewById(R.id.ListViewManageButtonsLayout);
@@ -311,74 +314,118 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				alertDialog.show();
 				break;
 			case R.id.btnMove:
-				if (toManage.size() <= 0) {
-					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
-					break;
-				}
-				alertDialogBuilder = new AlertDialog.Builder(this);                 
-				alertDialogBuilder.setTitle("Move");  
-				alertDialogBuilder.setMessage("Enter a new name: ");                
-				final EditText moveInput = new EditText(this); 
-			 	DialogInterface.OnClickListener moveDiag = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						if (which == DialogInterface.BUTTON_POSITIVE) {
-							String newName = moveInput.getText().toString();
-							Status s = Status.OK;
-							for (String file : toManage) {
-								s = FileManager.Move(file, directory + newName);
-								if (s != Status.OK) {
-									ErrorHandler.ShowError(s, file, context);
-									break;
-								}
-							}
-							if (s == Status.OK) {
-								Toast.makeText(context, "File Moved", Toast.LENGTH_LONG).show();
-							}
-							Refresh();
-						}
+				if (!getFolderMode) {
+					if (toManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
 					}
-				};
-				alertDialogBuilder.setView(moveInput);
-				alertDialogBuilder.setPositiveButton("Ok", moveDiag);
-				alertDialogBuilder.setNegativeButton("Cancel", moveDiag);
-			    alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
+					getFolderMode = true;
+					btnMove.setText("Move Files Here");
+					btnRename.setVisibility(View.GONE);
+					btnCopy.setVisibility(View.GONE);
+					btnDelete.setVisibility(View.GONE);
+					//push these on stored to be moved later
+					for (String file : toManage) {
+						storedManage.add(file);
+					}
+				} else {
+					getFolderMode = false;
+					btnMove.setText(R.string.move);
+					btnRename.setVisibility(View.VISIBLE);
+					btnCopy.setVisibility(View.VISIBLE);
+					btnDelete.setVisibility(View.VISIBLE);
+					if (storedManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						storedManage.clear();
+						break;
+					}
+					alertDialogBuilder = new AlertDialog.Builder(this);                 
+					alertDialogBuilder.setTitle("Move");  
+					alertDialogBuilder.setMessage("Are you sure you want to move the files to this directory?");                
+					DialogInterface.OnClickListener moveDiag = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == DialogInterface.BUTTON_POSITIVE) {
+								Status s = Status.OK;
+								for (String file : storedManage) {
+									String[] names = file.split("/");
+									String location = directory + names[names.length-1];
+									s = FileManager.Move(file, location);
+									if (s != Status.OK) {
+										ErrorHandler.ShowError(s, file, context);
+										break;
+									}
+								}
+								if (s == Status.OK) {
+									Toast.makeText(context, "Files Moved", Toast.LENGTH_LONG).show();
+								}
+								storedManage.clear();
+								Refresh();
+							}
+						}
+					};
+					alertDialogBuilder.setPositiveButton("Yes", moveDiag);
+					alertDialogBuilder.setNegativeButton("No", moveDiag);
+				    alertDialog = alertDialogBuilder.create();
+					alertDialog.show();
+				}
 				break;
 			case R.id.btnCopy:
-				if (toManage.size() <= 0) {
-					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
-					break;
-				}
-				alertDialogBuilder = new AlertDialog.Builder(this);                 
-				alertDialogBuilder.setTitle("Copy");  
-				alertDialogBuilder.setMessage("Enter a new name: ");                
-				final EditText copyInput = new EditText(this); 
-			 	DialogInterface.OnClickListener copyDiag = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						if (which == DialogInterface.BUTTON_POSITIVE) {
-							String newName = copyInput.getText().toString();
-							Status s = Status.OK;
-							for (String file : toManage) {
-								s = FileManager.Copy(file, directory + newName);
-								if (s != Status.OK) {
-									ErrorHandler.ShowError(s, file, context);
-									break;
-								}
-							}
-							if (s == Status.OK) {
-								Toast.makeText(context, "File Copied", Toast.LENGTH_LONG).show();
-							}
-							Refresh();
-						}
+				if (!getFolderMode) {
+					if (toManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
 					}
-				};
-				alertDialogBuilder.setView(copyInput);
-				alertDialogBuilder.setPositiveButton("Ok", copyDiag);
-				alertDialogBuilder.setNegativeButton("Cancel", copyDiag);
-			    alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
+					getFolderMode = true;
+					btnCopy.setText("Copy Files Here");
+					btnRename.setVisibility(View.GONE);
+					btnMove.setVisibility(View.GONE);
+					btnDelete.setVisibility(View.GONE);
+					//push these on stored to be moved later
+					for (String file : toManage) {
+						storedManage.add(file);
+					}
+				} else {
+					getFolderMode = false;
+					btnCopy.setText(R.string.copy);
+					btnRename.setVisibility(View.VISIBLE);
+					btnMove.setVisibility(View.VISIBLE);
+					btnDelete.setVisibility(View.VISIBLE);
+					if (storedManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						storedManage.clear();
+						break;
+					}
+					alertDialogBuilder = new AlertDialog.Builder(this);                 
+					alertDialogBuilder.setTitle("Copy");  
+					alertDialogBuilder.setMessage("Are you sure you want to copy the files to this directory?");                
+				 	DialogInterface.OnClickListener copyDiag = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == DialogInterface.BUTTON_POSITIVE) {
+								Status s = Status.OK;
+								for (String file : storedManage) {
+									String[] names = file.split("/");
+									String location = directory + names[names.length-1];
+									s = FileManager.Copy(file, location);
+									if (s != Status.OK) {
+										ErrorHandler.ShowError(s, file, context);
+										break;
+									}
+								}
+								if (s == Status.OK) {
+									Toast.makeText(context, "Files Copied", Toast.LENGTH_LONG).show();
+								}
+								storedManage.clear();
+								Refresh();
+							}
+						}
+					};
+					alertDialogBuilder.setPositiveButton("Yes", copyDiag);
+					alertDialogBuilder.setNegativeButton("No", copyDiag);
+				    alertDialog = alertDialogBuilder.create();
+					alertDialog.show();
+				}
 				break;
 			case R.id.btnDelete:
 				if (toManage.size() <= 0) {
@@ -444,39 +491,54 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				break;
 			case R.id.btnUnzip:
 				//Make sure that the proper number of files have been selected
-				if (toManage.size() <= 0) {
-					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
-					break;
-				} else if (toManage.size() > 1) {
-					ErrorHandler.ShowError(Status.CAN_ONLY_RENAME_ONE, "", context);
-					break;
-				}
-				alertDialogBuilder = new AlertDialog.Builder(this);                 
-				alertDialogBuilder.setTitle("Unzip");  
-				alertDialogBuilder.setMessage("Would you like to unzip these files?");                
-			 	DialogInterface.OnClickListener unzipDiag = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						if (which == DialogInterface.BUTTON_POSITIVE) {
-							Status s = Status.OK;
-							for (String file : toManage) {
-								s = ArchiveManager.Unzip(file);
-								if (s != Status.OK) {
-									ErrorHandler.ShowError(s, file, context);
-									break;
-								}
-							}
-							if (s == Status.OK) {
-								Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
-							}
-							Refresh();
-						}
+				if (!getFolderMode) {
+					if (toManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
 					}
-				};
-				alertDialogBuilder.setPositiveButton("Yes", unzipDiag);
-				alertDialogBuilder.setNegativeButton("No", unzipDiag);
-			    alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
+					getFolderMode = true;
+					btnUnzip.setText("Unzip Files Here");
+					btnZip.setVisibility(View.GONE);
+					//push these on stored to be moved later
+					for (String file : toManage) {
+						storedManage.add(file);
+					}
+				} else {
+					getFolderMode = false;
+					btnUnzip.setText(R.string.unzip);
+					btnZip.setVisibility(View.VISIBLE);
+					if (storedManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
+					}
+					alertDialogBuilder = new AlertDialog.Builder(this);                 
+					alertDialogBuilder.setTitle("Unzip");  
+					alertDialogBuilder.setMessage("Would you like to unzip the files to this directory?");                
+				 	DialogInterface.OnClickListener unzipDiag = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == DialogInterface.BUTTON_POSITIVE) {
+								Status s = Status.OK;
+								for (String file : storedManage) {
+									s = ArchiveManager.Unzip(file, directory);
+									if (s != Status.OK) {
+										ErrorHandler.ShowError(s, file, context);
+										break;
+									}
+								}
+								if (s == Status.OK) {
+									Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
+								}
+								storedManage.clear();
+								Refresh();
+							}
+						}
+					};
+					alertDialogBuilder.setPositiveButton("Yes", unzipDiag);
+					alertDialogBuilder.setNegativeButton("No", unzipDiag);
+				    alertDialog = alertDialogBuilder.create();
+					alertDialog.show();
+				}
 				break;
 			default:
 				String selection;
