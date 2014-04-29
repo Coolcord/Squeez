@@ -230,6 +230,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			layout.addView(rootLayout);
 			break;
 		case GRID:
+			selectMode = false;
 			FileManager.List(files, directory);
 			toManage.clear();
 			layout.removeAllViews();
@@ -766,6 +767,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			} else {
 				selectMode = false;
 				Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
+				Refresh();
 			}
 			break;
 		default:
@@ -779,6 +781,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		if (selectMode) {
 			selectMode = false;
 			Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
+			Refresh();
 		} else if (directory == "/") {
 			super.onBackPressed();
 		} else {
