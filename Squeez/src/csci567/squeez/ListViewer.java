@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,13 +49,14 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	String directory;
 	ArrayList<String> files;
 	ArrayList<String> toManage, storedManage;
-	LinearLayout layout, manageLayout, archiveLayout;
+	LinearLayout manageLayout, archiveLayout, optionButtonSpacer;
+	ScrollView layout;
 	private ListView Lview;
 	String [] list_items;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_list_view);
+		setContentView(R.layout.activity_view);
 		context = this;
 		
 		getFolderMode = false;
@@ -62,10 +64,10 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		toManage = new ArrayList<String>();
 		storedManage = new ArrayList<String>();
 		directory = "/";
-		layout = (LinearLayout) findViewById(R.id.ListViewVerticalLayout);
-		manageLayout = (LinearLayout)findViewById(R.id.ListViewManageButtonsLayout);
-		archiveLayout = (LinearLayout)findViewById(R.id.ListViewArchiveButtonsLayout);
-		//Lview = (ListView) findViewById(R.id.listView1);
+		layout = (ScrollView) findViewById(R.id.ViewScrollLayout);
+		manageLayout = (LinearLayout)findViewById(R.id.ViewManageButtonsLayout);
+		archiveLayout = (LinearLayout)findViewById(R.id.ViewArchiveButtonsLayout);
+		optionButtonSpacer = (LinearLayout)findViewById(R.id.ViewOptionButtonsLayoutSpacer);
 		
 		btnManage = (Button) findViewById(R.id.btnManage);
 		btnArchive = (Button) findViewById(R.id.btnArchive);
@@ -171,6 +173,12 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		dir_text = (TextView) findViewById(R.id.dir_text);
 		dir_text.setText("current directory:" + directory);
 		int i = 0;
+		
+		LinearLayout rootLayout = new LinearLayout(this);
+		LayoutParams rootLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+		rootLayout.setLayoutParams(rootLayoutParams);
+		rootLayout.setOrientation(LinearLayout.VERTICAL);
+		
 		//This for loop can be used to make clickable objects for each file given
 		for (String fileName : files) {
 			LinearLayout fileHolder = new LinearLayout(this);
@@ -204,10 +212,11 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 			fileHolder.addView(cbFile);
 			fileHolder.addView(imFile);
 			fileHolder.addView(btnFile);
-			layout.addView(fileHolder);
+			rootLayout.addView(fileHolder);
 			registerForContextMenu(btnFile);
 			i++;
 		}
+		layout.addView(rootLayout);
 		
 		
 		
@@ -262,16 +271,20 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				archiveLayout.setVisibility(View.GONE);
 				if (manageLayout.getVisibility() == View.GONE) {
 					manageLayout.setVisibility(View.VISIBLE);
+					optionButtonSpacer.setVisibility(View.INVISIBLE);
 				} else {
 					manageLayout.setVisibility(View.GONE);
+					optionButtonSpacer.setVisibility(View.GONE);
 				}
 				break;
 			case R.id.btnArchive:
 				manageLayout.setVisibility(View.GONE);
 				if (archiveLayout.getVisibility() == View.GONE) {
 					archiveLayout.setVisibility(View.VISIBLE);
+					optionButtonSpacer.setVisibility(View.INVISIBLE);
 				} else {
 					archiveLayout.setVisibility(View.GONE);
+					optionButtonSpacer.setVisibility(View.GONE);
 				}
 				break;
 			case R.id.btnRename:

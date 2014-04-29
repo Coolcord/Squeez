@@ -51,14 +51,14 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 	String directory;
 	ArrayList<String> files;
 	ArrayList<String> toManage, storedManage;
-	LinearLayout manageLayout, archiveLayout;
+	LinearLayout manageLayout, archiveLayout, optionButtonSpacer;
 	ScrollView layout;
 	private ListView Lview;
 	String [] list_items;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_grid_view);
+		setContentView(R.layout.activity_view);
 		context = this;
 		
 		selectMode = false;
@@ -67,9 +67,10 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 		toManage = new ArrayList<String>();
 		storedManage = new ArrayList<String>();
 		directory = "/";
-		layout = (ScrollView) findViewById(R.id.GridViewScrollLayout);
-		manageLayout = (LinearLayout)findViewById(R.id.GridViewManageButtonsLayout);
-		archiveLayout = (LinearLayout)findViewById(R.id.GridViewArchiveButtonsLayout);
+		layout = (ScrollView) findViewById(R.id.ViewScrollLayout);
+		manageLayout = (LinearLayout)findViewById(R.id.ViewManageButtonsLayout);
+		archiveLayout = (LinearLayout)findViewById(R.id.ViewArchiveButtonsLayout);
+		optionButtonSpacer = (LinearLayout)findViewById(R.id.ViewOptionButtonsLayoutSpacer);
 		
 		btnManage = (Button) findViewById(R.id.btnManage);
 		btnArchive = (Button) findViewById(R.id.btnArchive);
@@ -320,22 +321,26 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 		AlertDialog alertDialog;
 		switch (v.getId())
 		{
-			case R.id.btnManage:
-				archiveLayout.setVisibility(View.GONE);
-				if (manageLayout.getVisibility() == View.GONE) {
-					manageLayout.setVisibility(View.VISIBLE);
-				} else {
-					manageLayout.setVisibility(View.GONE);
-				}
-				break;
-			case R.id.btnArchive:
+		case R.id.btnManage:
+			archiveLayout.setVisibility(View.GONE);
+			if (manageLayout.getVisibility() == View.GONE) {
+				manageLayout.setVisibility(View.VISIBLE);
+				optionButtonSpacer.setVisibility(View.INVISIBLE);
+			} else {
 				manageLayout.setVisibility(View.GONE);
-				if (archiveLayout.getVisibility() == View.GONE) {
-					archiveLayout.setVisibility(View.VISIBLE);
-				} else {
-					archiveLayout.setVisibility(View.GONE);
-				}
-				break;
+				optionButtonSpacer.setVisibility(View.GONE);
+			}
+			break;
+		case R.id.btnArchive:
+			manageLayout.setVisibility(View.GONE);
+			if (archiveLayout.getVisibility() == View.GONE) {
+				archiveLayout.setVisibility(View.VISIBLE);
+				optionButtonSpacer.setVisibility(View.INVISIBLE);
+			} else {
+				archiveLayout.setVisibility(View.GONE);
+				optionButtonSpacer.setVisibility(View.GONE);
+			}
+			break;
 			case R.id.btnRename:
 				//Make sure that the proper number of files have been selected
 				if (toManage.size() <= 0) {
