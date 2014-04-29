@@ -27,7 +27,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
@@ -47,6 +46,7 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 	Context context;
 	TextView dir_text;
 	Boolean getFolderMode;
+	Boolean selectMode;
 	
 	String directory;
 	ArrayList<String> files;
@@ -61,6 +61,7 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 		setContentView(R.layout.activity_grid_view);
 		context = this;
 		
+		selectMode = false;
 		getFolderMode = false;
 		files = new ArrayList<String>();
 		toManage = new ArrayList<String>();
@@ -258,6 +259,7 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 			
 			ImageButton btnFile = new ImageButton(this);
 			btnFile.setOnClickListener(this);
+			btnFile.setOnLongClickListener(this);
 			btnFile.setId(IMAGE_ID_OFFSET + c);
 			btnFile.setBackgroundColor(Color.BLACK);
 			if (fileName.charAt(fileName.length() - 1) == '/') {
@@ -271,6 +273,7 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 			tvFile.setGravity(Gravity.CENTER);
 			tvFile.setEllipsize(TextUtils.TruncateAt.END);
 			tvFile.setOnClickListener(this);
+			tvFile.setOnLongClickListener(this);
 			
 			fileHolder.addView(btnFile);
 			fileHolder.addView(tvFile);
@@ -599,6 +602,41 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 				}
 				break;
 			default:
+				if (selectMode) {
+					String selection;
+					int id = 0;
+					TextView tvFile;
+					ImageButton image;
+					if (v.getId() >= IMAGE_ID_OFFSET) {
+						image = (ImageButton)v;
+						id = image.getId();
+						id -= IMAGE_ID_OFFSET;
+						int textId = id + BUTTON_ID_OFFSET;
+						tvFile = (TextView) findViewById(textId);						
+					} else { //assume textview
+						tvFile = (TextView)v;
+						id = tvFile.getId();
+						id -= BUTTON_ID_OFFSET;
+						int imageId = id + IMAGE_ID_OFFSET;
+						image = (ImageButton) findViewById(imageId);
+					}
+					
+					selection = directory + tvFile.getText().toString();
+					
+					int holderId = id + CHECKBOX_ID_OFFSET;
+					LinearLayout fileHolder = (LinearLayout) findViewById(holderId);
+					
+					if (toManage.contains(selection)) {
+						toManage.remove(selection);
+						fileHolder.setBackgroundColor(Color.BLACK);
+						image.setBackgroundColor(Color.BLACK);
+					} else {
+						toManage.add(selection);
+						fileHolder.setBackgroundColor(Color.BLUE);
+						image.setBackgroundColor(Color.BLUE);
+					}
+					break;
+			} else {
 				String selection;
 				if (v.getId() >= IMAGE_ID_OFFSET) {
 					ImageButton image = (ImageButton)v;
@@ -620,13 +658,19 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 						FileManager.Open(directory + selection, this);
 					}
 				    break;
+				}
 		}
 	}
 	
 	@Override
 	public boolean onLongClick(View v) {
-		Toast.makeText(getBaseContext(), "long click: ", Toast.LENGTH_LONG).show();
-		//registerForContextMenu(v);
+		if (!selectMode) {
+			selectMode = true;
+			Toast.makeText(getBaseContext(), "Select Mode Enabled", Toast.LENGTH_LONG).show();
+		} else {
+			selectMode = false;
+			Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
+		}
 		return true;
 	}
 	
