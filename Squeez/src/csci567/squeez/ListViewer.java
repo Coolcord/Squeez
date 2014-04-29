@@ -336,6 +336,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 					btnDelete.setVisibility(View.VISIBLE);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						storedManage.clear();
 						break;
 					}
 					alertDialogBuilder = new AlertDialog.Builder(this);                 
@@ -392,6 +393,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 					btnDelete.setVisibility(View.VISIBLE);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						storedManage.clear();
 						break;
 					}
 					alertDialogBuilder = new AlertDialog.Builder(this);                 
@@ -489,39 +491,54 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				break;
 			case R.id.btnUnzip:
 				//Make sure that the proper number of files have been selected
-				if (toManage.size() <= 0) {
-					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
-					break;
-				} else if (toManage.size() > 1) {
-					ErrorHandler.ShowError(Status.CAN_ONLY_RENAME_ONE, "", context);
-					break;
-				}
-				alertDialogBuilder = new AlertDialog.Builder(this);                 
-				alertDialogBuilder.setTitle("Unzip");  
-				alertDialogBuilder.setMessage("Would you like to unzip these files?");                
-			 	DialogInterface.OnClickListener unzipDiag = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						if (which == DialogInterface.BUTTON_POSITIVE) {
-							Status s = Status.OK;
-							for (String file : toManage) {
-								s = ArchiveManager.Unzip(file);
-								if (s != Status.OK) {
-									ErrorHandler.ShowError(s, file, context);
-									break;
-								}
-							}
-							if (s == Status.OK) {
-								Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
-							}
-							Refresh();
-						}
+				if (!getFolderMode) {
+					if (toManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
 					}
-				};
-				alertDialogBuilder.setPositiveButton("Yes", unzipDiag);
-				alertDialogBuilder.setNegativeButton("No", unzipDiag);
-			    alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
+					getFolderMode = true;
+					btnUnzip.setText("Unzip Files Here");
+					btnZip.setVisibility(View.GONE);
+					//push these on stored to be moved later
+					for (String file : toManage) {
+						storedManage.add(file);
+					}
+				} else {
+					getFolderMode = false;
+					btnUnzip.setText(R.string.unzip);
+					btnZip.setVisibility(View.VISIBLE);
+					if (storedManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
+					}
+					alertDialogBuilder = new AlertDialog.Builder(this);                 
+					alertDialogBuilder.setTitle("Unzip");  
+					alertDialogBuilder.setMessage("Would you like to unzip the files to this directory?");                
+				 	DialogInterface.OnClickListener unzipDiag = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == DialogInterface.BUTTON_POSITIVE) {
+								Status s = Status.OK;
+								for (String file : storedManage) {
+									s = ArchiveManager.Unzip(file, directory);
+									if (s != Status.OK) {
+										ErrorHandler.ShowError(s, file, context);
+										break;
+									}
+								}
+								if (s == Status.OK) {
+									Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
+								}
+								storedManage.clear();
+								Refresh();
+							}
+						}
+					};
+					alertDialogBuilder.setPositiveButton("Yes", unzipDiag);
+					alertDialogBuilder.setNegativeButton("No", unzipDiag);
+				    alertDialog = alertDialogBuilder.create();
+					alertDialog.show();
+				}
 				break;
 			default:
 				String selection;
