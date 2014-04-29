@@ -1,49 +1,97 @@
 package csci567.squeez;
 
+import java.util.ArrayList;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
+public class GridViewer extends Activity implements OnClickListener, OnLongClickListener, OnCheckedChangeListener {
 
-public class GridViewer extends Activity {
+	public static final int BUTTON_ID_OFFSET = 8192000;
+	public static final int CHECKBOX_ID_OFFSET = BUTTON_ID_OFFSET / 2;
+	public static final int HOLDER_ID_OFFSET = BUTTON_ID_OFFSET * 2;
+	public static final int IMAGE_ID_OFFSET = BUTTON_ID_OFFSET * 4;
+	
+	Button btnRename, btnMove, btnCopy, btnDelete, btnZip, btnUnzip,
+			btnManage, btnArchive;
+	Context context;
+	TextView dir_text;
+	Boolean getFolderMode;
 	
 	String directory;
 	ArrayList<String> files;
-	LinearLayout layout;
-	private GridView Gview;
-	String [] grid_items;
-	GridViewAdapter myAdapter;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_grid_view);
-        
-        files = new ArrayList<String>();
-        directory = "/";
-        Gview = (GridView) findViewById(R.id.grid);
- 
-       Refresh();
-    }
-    
-    /**
+	ArrayList<String> toManage, storedManage;
+	LinearLayout manageLayout, archiveLayout;
+	ScrollView layout;
+	private ListView Lview;
+	String [] list_items;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_grid_view);
+		context = this;
+		
+		getFolderMode = false;
+		files = new ArrayList<String>();
+		toManage = new ArrayList<String>();
+		storedManage = new ArrayList<String>();
+		directory = "/";
+		layout = (ScrollView) findViewById(R.id.GridViewScrollLayout);
+		manageLayout = (LinearLayout)findViewById(R.id.GridViewManageButtonsLayout);
+		archiveLayout = (LinearLayout)findViewById(R.id.GridViewArchiveButtonsLayout);
+		
+		btnManage = (Button) findViewById(R.id.btnManage);
+		btnArchive = (Button) findViewById(R.id.btnArchive);
+		btnRename = (Button) findViewById(R.id.btnRename);
+		btnMove = (Button) findViewById(R.id.btnMove);
+		btnCopy = (Button) findViewById(R.id.btnCopy);
+		btnDelete = (Button) findViewById(R.id.btnDelete);
+		btnZip = (Button) findViewById(R.id.btnZip);
+		btnUnzip = (Button) findViewById(R.id.btnUnzip);
+		
+		btnManage.setOnClickListener(this);
+		btnArchive.setOnClickListener(this);
+		btnRename.setOnClickListener(this);
+		btnMove.setOnClickListener(this);
+		btnCopy.setOnClickListener(this);
+		btnDelete.setOnClickListener(this);
+		btnZip.setOnClickListener(this);
+		btnUnzip.setOnClickListener(this);
+		
+		Refresh();
+	}
+
+	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -52,14 +100,14 @@ public class GridViewer extends Activity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.grid_view, menu);
+		getMenuInflater().inflate(R.menu.list_view, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -77,14 +125,19 @@ public class GridViewer extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.context_menu, menu);
 	}
 	
+	
+	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		Toast.makeText(getBaseContext(), "EEYUP!", Toast.LENGTH_LONG).show();
+		
 		int position = info.position;
 		if(item.getItemId()==R.id.zip) {
 			//use zip function
@@ -111,56 +164,513 @@ public class GridViewer extends Activity {
 			Toast.makeText(getBaseContext(), "delete selected: ", Toast.LENGTH_LONG).show();
 			return true;
 		}
-		return super.onContextItemSelected(null);
+		return true;
 	}
 	
+	public void Refresh() {
+		FileManager.List(files, directory);
+		toManage.clear();
+		layout.removeAllViews();
+		dir_text = (TextView) findViewById(R.id.dir_text);
+		dir_text.setText("current directory:" + directory);
+		int c = 0;
+		int i = 0;
+		
+		//Determine how many columns to use based upon screen width
+		int maxCols = 0;
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		for (int width = dm.widthPixels; width > 0; width -= 240)
+		{
+			maxCols++;
+		}
+		
+		LinearLayout rootLayout = new LinearLayout(this);
+		LayoutParams rootLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+		rootLayout.setLayoutParams(rootLayoutParams);
+		rootLayout.setOrientation(LinearLayout.HORIZONTAL);
+		LayoutParams vLayoutParams;
+		switch (maxCols)
+		{
+		default:
+		case 1:
+			vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+			break;
+		case 2:
+			vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.5f);
+			break;
+		case 3:
+			vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.33f);
+			break;
+		case 4:
+			vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.25f);
+			break;
+		case 5:
+			vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.2f);
+			break;
+		}
+		
+		LinearLayout vLayout1 = new LinearLayout(this);
+		LinearLayout vLayout2 = new LinearLayout(this);
+		LinearLayout vLayout3 = new LinearLayout(this);
+		LinearLayout vLayout4 = new LinearLayout(this);
+		LinearLayout vLayout5 = new LinearLayout(this);
+		vLayout1.setLayoutParams(vLayoutParams);
+		vLayout2.setLayoutParams(vLayoutParams);
+		vLayout3.setLayoutParams(vLayoutParams);
+		vLayout4.setLayoutParams(vLayoutParams);
+		vLayout5.setLayoutParams(vLayoutParams);
+		vLayout1.setOrientation(LinearLayout.VERTICAL);
+		vLayout2.setOrientation(LinearLayout.VERTICAL);
+		vLayout3.setOrientation(LinearLayout.VERTICAL);
+		vLayout4.setOrientation(LinearLayout.VERTICAL);
+		vLayout5.setOrientation(LinearLayout.VERTICAL);
+		//This for loop can be used to make clickable objects for each file given
+		for (String fileName : files) {
+			
+			LinearLayout fileHolder = new LinearLayout(this);
+			LayoutParams fileHolderParams;
+			
+			switch (maxCols)
+			{
+			default:
+			case 1:
+				fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+				break;
+			case 2:
+				fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.5f);
+				break;
+			case 3:
+				fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.33f);
+				break;
+			case 4:
+				fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.25f);
+				break;
+			case 5:
+				fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.2f);
+				break;
+			}
+			fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.5f);
+			fileHolder.setLayoutParams(fileHolderParams);
+			fileHolder.setOrientation(LinearLayout.VERTICAL);
+			fileHolder.setPadding(0, 5, 0, 5);
+			fileHolder.setId(CHECKBOX_ID_OFFSET + c);
+			
+			ImageButton btnFile = new ImageButton(this);
+			btnFile.setOnClickListener(this);
+			btnFile.setId(IMAGE_ID_OFFSET + c);
+			btnFile.setBackgroundColor(Color.BLACK);
+			if (fileName.charAt(fileName.length() - 1) == '/') {
+				btnFile.setImageResource(R.drawable.folder);
+			} else {
+				btnFile.setImageResource(R.drawable.file);
+			}
+			TextView tvFile = new TextView(this);
+			tvFile.setText(fileName);
+			tvFile.setId(BUTTON_ID_OFFSET + c);
+			tvFile.setGravity(Gravity.CENTER);
+			tvFile.setEllipsize(TextUtils.TruncateAt.END);
+			tvFile.setOnClickListener(this);
+			
+			fileHolder.addView(btnFile);
+			fileHolder.addView(tvFile);
+			if (i == 0) {
+				vLayout1.addView(fileHolder);
+			} else if (i == 1) {
+				vLayout2.addView(fileHolder);
+			} else if (i == 2) {
+				vLayout3.addView(fileHolder);
+			} else if (i == 3) {
+				vLayout4.addView(fileHolder);
+			} else if (i == 4) {
+				vLayout5.addView(fileHolder);
+			}
+			c++;
+			i++;
+			if (i >= maxCols) {
+				i = 0;
+			}
+		}
+		if (maxCols >= 1) {
+			rootLayout.addView(vLayout1);
+		}
+		if (maxCols >= 2) {
+			rootLayout.addView(vLayout2);
+		}
+		if (maxCols >= 3) {
+			rootLayout.addView(vLayout3);
+		}
+		if (maxCols >= 4) {
+			rootLayout.addView(vLayout4);
+		}
+		if (maxCols >= 5) {
+			rootLayout.addView(vLayout5);
+		}
+		layout.addView(rootLayout);
+	}
+		
+	
+	@Override
 	public void onClick(View v) {
-		Button btn = (Button)v;
-	    String folder = btn.getText().toString();
-	    
-	    //Load the new Directory
-	    if (folder.charAt(folder.length() - 1) == '/') {
-		    directory += folder;
-		    Refresh();
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		AlertDialog alertDialog;
+		switch (v.getId())
+		{
+			case R.id.btnManage:
+				archiveLayout.setVisibility(View.GONE);
+				if (manageLayout.getVisibility() == View.GONE) {
+					manageLayout.setVisibility(View.VISIBLE);
+				} else {
+					manageLayout.setVisibility(View.GONE);
+				}
+				break;
+			case R.id.btnArchive:
+				manageLayout.setVisibility(View.GONE);
+				if (archiveLayout.getVisibility() == View.GONE) {
+					archiveLayout.setVisibility(View.VISIBLE);
+				} else {
+					archiveLayout.setVisibility(View.GONE);
+				}
+				break;
+			case R.id.btnRename:
+				//Make sure that the proper number of files have been selected
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				} else if (toManage.size() > 1) {
+					ErrorHandler.ShowError(Status.CAN_ONLY_RENAME_ONE, "", context);
+					break;
+				}
+				alertDialogBuilder = new AlertDialog.Builder(this);                 
+				alertDialogBuilder.setTitle("Rename");  
+				alertDialogBuilder.setMessage("Enter a new name: ");                
+				final EditText renameInput = new EditText(this); 
+			 	DialogInterface.OnClickListener renameDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							String newName = renameInput.getText().toString();
+							Status s = Status.OK;
+							for (String file : toManage) {
+								s = FileManager.Rename(file, newName);
+								if (s != Status.OK) {
+									ErrorHandler.ShowError(s, file, context);
+									break;
+								}
+							}
+							if (s == Status.OK) {
+								Toast.makeText(context, "File Renamed", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setView(renameInput);
+				alertDialogBuilder.setPositiveButton("Ok", renameDiag);
+				alertDialogBuilder.setNegativeButton("Cancel", renameDiag);
+			    alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+				break;
+			case R.id.btnMove:
+				if (!getFolderMode) {
+					if (toManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
+					}
+					getFolderMode = true;
+					btnMove.setText("Move Files Here");
+					btnRename.setVisibility(View.GONE);
+					btnCopy.setVisibility(View.GONE);
+					btnDelete.setVisibility(View.GONE);
+					//push these on stored to be moved later
+					for (String file : toManage) {
+						storedManage.add(file);
+					}
+				} else {
+					getFolderMode = false;
+					btnMove.setText(R.string.move);
+					btnRename.setVisibility(View.VISIBLE);
+					btnCopy.setVisibility(View.VISIBLE);
+					btnDelete.setVisibility(View.VISIBLE);
+					if (storedManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						storedManage.clear();
+						break;
+					}
+					alertDialogBuilder = new AlertDialog.Builder(this);                 
+					alertDialogBuilder.setTitle("Move");  
+					alertDialogBuilder.setMessage("Are you sure you want to move the files to this directory?");                
+					DialogInterface.OnClickListener moveDiag = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == DialogInterface.BUTTON_POSITIVE) {
+								Status s = Status.OK;
+								for (String file : storedManage) {
+									String[] names = file.split("/");
+									String location = directory + names[names.length-1];
+									s = FileManager.Move(file, location);
+									if (s != Status.OK) {
+										ErrorHandler.ShowError(s, file, context);
+										break;
+									}
+								}
+								if (s == Status.OK) {
+									Toast.makeText(context, "Files Moved", Toast.LENGTH_LONG).show();
+								}
+								storedManage.clear();
+								Refresh();
+							}
+						}
+					};
+					alertDialogBuilder.setPositiveButton("Yes", moveDiag);
+					alertDialogBuilder.setNegativeButton("No", moveDiag);
+				    alertDialog = alertDialogBuilder.create();
+					alertDialog.show();
+				}
+				break;
+			case R.id.btnCopy:
+				if (!getFolderMode) {
+					if (toManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
+					}
+					getFolderMode = true;
+					btnCopy.setText("Copy Files Here");
+					btnRename.setVisibility(View.GONE);
+					btnMove.setVisibility(View.GONE);
+					btnDelete.setVisibility(View.GONE);
+					//push these on stored to be moved later
+					for (String file : toManage) {
+						storedManage.add(file);
+					}
+				} else {
+					getFolderMode = false;
+					btnCopy.setText(R.string.copy);
+					btnRename.setVisibility(View.VISIBLE);
+					btnMove.setVisibility(View.VISIBLE);
+					btnDelete.setVisibility(View.VISIBLE);
+					if (storedManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						storedManage.clear();
+						break;
+					}
+					alertDialogBuilder = new AlertDialog.Builder(this);                 
+					alertDialogBuilder.setTitle("Copy");  
+					alertDialogBuilder.setMessage("Are you sure you want to copy the files to this directory?");                
+				 	DialogInterface.OnClickListener copyDiag = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == DialogInterface.BUTTON_POSITIVE) {
+								Status s = Status.OK;
+								for (String file : storedManage) {
+									String[] names = file.split("/");
+									String location = directory + names[names.length-1];
+									s = FileManager.Copy(file, location);
+									if (s != Status.OK) {
+										ErrorHandler.ShowError(s, file, context);
+										break;
+									}
+								}
+								if (s == Status.OK) {
+									Toast.makeText(context, "Files Copied", Toast.LENGTH_LONG).show();
+								}
+								storedManage.clear();
+								Refresh();
+							}
+						}
+					};
+					alertDialogBuilder.setPositiveButton("Yes", copyDiag);
+					alertDialogBuilder.setNegativeButton("No", copyDiag);
+				    alertDialog = alertDialogBuilder.create();
+					alertDialog.show();
+				}
+				break;
+			case R.id.btnDelete:
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				}
+				alertDialogBuilder.setTitle("Delete");
+				alertDialogBuilder.setMessage("Are you sure you want to delete the selected files?");
+				DialogInterface.OnClickListener deleteDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							Status s = Status.OK;
+							for (String file : toManage) {
+								s = FileManager.Delete(file);
+								if (s != Status.OK) {
+									ErrorHandler.ShowError(s, file, context);
+									break;
+								}
+							}
+							if (s == Status.OK) {
+								Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setPositiveButton("Yes", deleteDiag);
+				alertDialogBuilder.setNegativeButton("No", deleteDiag);
+				alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+				break;
+			case R.id.btnZip:
+				if (toManage.size() <= 0) {
+					ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+					break;
+				}
+				alertDialogBuilder = new AlertDialog.Builder(this);                 
+				alertDialogBuilder.setTitle("Zip");  
+				alertDialogBuilder.setMessage("Enter a name: ");                
+				final EditText archiveInput = new EditText(this); 
+			 	DialogInterface.OnClickListener archiveDiag = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							String archive = archiveInput.getText().toString();
+							Status s = Status.OK;
+							s = ArchiveManager.Zip(toManage, directory + archive);
+							if (s != Status.OK) {
+								ErrorHandler.ShowError(s, archive, context);
+							} else {
+								Toast.makeText(context, "Archive Created", Toast.LENGTH_LONG).show();
+							}
+							Refresh();
+						}
+					}
+				};
+				alertDialogBuilder.setView(archiveInput);
+				alertDialogBuilder.setPositiveButton("Ok", archiveDiag);
+				alertDialogBuilder.setNegativeButton("Cancel", archiveDiag);
+			    alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
+				break;
+			case R.id.btnUnzip:
+				//Make sure that the proper number of files have been selected
+				if (!getFolderMode) {
+					if (toManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
+					}
+					getFolderMode = true;
+					btnUnzip.setText("Unzip Files Here");
+					btnZip.setVisibility(View.GONE);
+					//push these on stored to be moved later
+					for (String file : toManage) {
+						storedManage.add(file);
+					}
+				} else {
+					getFolderMode = false;
+					btnUnzip.setText(R.string.unzip);
+					btnZip.setVisibility(View.VISIBLE);
+					if (storedManage.size() <= 0) {
+						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						break;
+					}
+					alertDialogBuilder = new AlertDialog.Builder(this);                 
+					alertDialogBuilder.setTitle("Unzip");  
+					alertDialogBuilder.setMessage("Would you like to unzip the files to this directory?");                
+				 	DialogInterface.OnClickListener unzipDiag = new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == DialogInterface.BUTTON_POSITIVE) {
+								Status s = Status.OK;
+								for (String file : storedManage) {
+									s = ArchiveManager.Unzip(file, directory);
+									if (s != Status.OK) {
+										ErrorHandler.ShowError(s, file, context);
+										break;
+									}
+								}
+								if (s == Status.OK) {
+									Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
+								}
+								storedManage.clear();
+								Refresh();
+							}
+						}
+					};
+					alertDialogBuilder.setPositiveButton("Yes", unzipDiag);
+					alertDialogBuilder.setNegativeButton("No", unzipDiag);
+				    alertDialog = alertDialogBuilder.create();
+					alertDialog.show();
+				}
+				break;
+			default:
+				String selection;
+				if (v.getId() >= IMAGE_ID_OFFSET) {
+					ImageButton image = (ImageButton)v;
+					int id = image.getId();
+					id -= IMAGE_ID_OFFSET;
+					id += BUTTON_ID_OFFSET;
+					TextView tvFile = (TextView) findViewById(id);
+					selection = tvFile.getText().toString();
+				} else { //assume button
+					TextView tvFile = (TextView)v;
+					selection = tvFile.getText().toString();
+				}
+				    
+				    //Load the new Directory
+				    if (selection.charAt(selection.length() - 1) == '/') {
+					    directory += selection;
+					    Refresh();
+					} else { //treat as a file
+						FileManager.Open(directory + selection, this);
+					}
+				    break;
 		}
 	}
-    
-    public void Refresh() {
-		FileManager.List(files, directory);
-		//Lview.removeAllViews();
-		
-		grid_items = new String[files.size()];
-		grid_items = files.toArray(grid_items);
-		myAdapter = new GridViewAdapter(this, R.layout.grid_items, grid_items);
-		
-		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, grid_items);
-		Gview.setAdapter(myAdapter);
-		registerForContextMenu(Gview);
-		//This for loop can be used to make clickable objects for each file given
-		/*for (String fileName : files) {
-			Button btnFile = new Button(getApplicationContext());	
-			btnFile.setText(fileName);
-			btnFile.setOnClickListener(this);
-			layout.addView(btnFile);
-		}*/
+	
+	@Override
+	public boolean onLongClick(View v) {
+		Toast.makeText(getBaseContext(), "long click: ", Toast.LENGTH_LONG).show();
+		//registerForContextMenu(v);
+		return true;
 	}
-    
-    @Override
+	
+	@Override
 	public void onBackPressed() {
 		if (directory == "/") {
 			super.onBackPressed();
 		} else {
 			//Build the destination path
 			String[] name = directory.split("/");
-			if (name.length > 2) {
-				directory = "";
+			directory = "";
+			if (name.length > 1) {
 				for (int i = 0; i < name.length-1; i++) {
-					directory += "/" + name[i];
+					if (name[i].length() > 0) {
+						directory += "/" + name[i];
+					}
 				}
+				directory += "/";
 			} else {
 				directory = "/";
 			}
 			Refresh();
 		}
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		
+		int btnId = buttonView.getId();
+		btnId -= CHECKBOX_ID_OFFSET;
+		btnId += BUTTON_ID_OFFSET;
+		int holderId = buttonView.getId();
+		holderId -= CHECKBOX_ID_OFFSET;
+		holderId += HOLDER_ID_OFFSET;
+		Button btn = (Button) findViewById(btnId);
+		LinearLayout fileHolder = (LinearLayout) findViewById(holderId);
+		if (isChecked) {
+			toManage.add(directory + btn.getText());
+			btn.setBackgroundColor(Color.BLUE);
+			fileHolder.setBackgroundColor(Color.BLUE);
+		} else {
+			toManage.remove(directory + btn.getText());
+			btn.setBackgroundColor(Color.BLACK);
+			fileHolder.setBackgroundColor(Color.BLACK);
+		}	
 	}
 }
