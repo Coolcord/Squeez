@@ -447,6 +447,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						break;
 					}
 					getFolderMode = true;
+					selectMode = false;
 					btnMove.setText("Move Files Here");
 					btnRename.setVisibility(View.GONE);
 					btnCopy.setVisibility(View.GONE);
@@ -504,6 +505,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						break;
 					}
 					getFolderMode = true;
+					selectMode = false;
 					btnCopy.setText("Copy Files Here");
 					btnRename.setVisibility(View.GONE);
 					btnMove.setVisibility(View.GONE);
@@ -624,6 +626,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						break;
 					}
 					getFolderMode = true;
+					selectMode = false;
 					btnUnzip.setText("Unzip Files Here");
 					btnZip.setVisibility(View.GONE);
 					//push these on stored to be moved later
