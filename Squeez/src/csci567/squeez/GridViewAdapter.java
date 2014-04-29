@@ -45,16 +45,17 @@ public class GridViewAdapter extends ArrayAdapter<String> {
 		else {
 			holder = (RecordHolder) grid.getTag();
 		}
-		
-		String file = files[fileCounter];
-		holder.txt.setText(file);
-		if( file.charAt(file.length() -1) == '/') {
-			holder.img.setImageResource(R.drawable.folder);
+		if(fileCounter < files.length) {
+			String file = files[fileCounter];
+			holder.txt.setText(file);
+			if( file.charAt(file.length() -1) == '/') {
+				holder.img.setImageResource(R.drawable.folder);
+			}
+			else{
+				holder.img.setImageResource(R.drawable.file);
+			}
+			fileCounter++;
 		}
-		else{
-			holder.img.setImageResource(R.drawable.file);
-		}
-		fileCounter++;
 		return grid;		
 	}
 
