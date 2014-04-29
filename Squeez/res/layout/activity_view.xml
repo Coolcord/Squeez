@@ -13,6 +13,10 @@
             android:id="@+id/LayoutDirectoryLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="6dip"
+            android:paddingRight="6dip"
+            android:paddingTop="2dip"
+            android:paddingBottom="2dip"
             android:orientation="horizontal">
             
             <ImageView 
@@ -29,7 +33,7 @@
 	            android:id="@+id/dir_text"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"
-	            android:textSize="20sp"
+	            android:textSize="18sp"
 	            android:text="" />
         </LinearLayout>
 
