@@ -29,6 +29,8 @@ public class GridViewer extends Activity {
 	LinearLayout layout;
 	private GridView Gview;
 	String [] grid_items;
+	GridViewAdapter myAdapter;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,8 +131,10 @@ public class GridViewer extends Activity {
 		
 		grid_items = new String[files.size()];
 		grid_items = files.toArray(grid_items);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, grid_items);
-		Gview.setAdapter(adapter);
+		myAdapter = new GridViewAdapter(this, R.layout.grid_items, grid_items);
+		
+		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, grid_items);
+		Gview.setAdapter(myAdapter);
 		registerForContextMenu(Gview);
 		//This for loop can be used to make clickable objects for each file given
 		/*for (String fileName : files) {
