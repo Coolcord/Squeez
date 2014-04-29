@@ -272,6 +272,7 @@ public class GridViewer extends Activity implements OnClickListener, OnLongClick
 			tvFile.setId(BUTTON_ID_OFFSET + c);
 			tvFile.setGravity(Gravity.CENTER);
 			tvFile.setEllipsize(TextUtils.TruncateAt.END);
+			tvFile.setSingleLine(true);
 			tvFile.setOnClickListener(this);
 			tvFile.setOnLongClickListener(this);
 			
