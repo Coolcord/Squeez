@@ -31,7 +31,12 @@ public class MainActivity extends Activity implements OnClickListener{
 	public void onClick(View v)
 	{
 		Intent list_intent = new Intent(this, ListViewer.class);
+		Bundle list_extras = list_intent.getExtras();
+		list_extras.putSerializable("ViewType", ViewType.LIST);
 		Intent grid_intent = new Intent(this, GridViewer.class);
+		Bundle grid_extras = list_intent.getExtras();
+		grid_extras.putSerializable("ViewType", ViewType.GRID);
+		
 		switch(v.getId()) {
 		case R.id.list_but:
 			this.startActivity(list_intent);
