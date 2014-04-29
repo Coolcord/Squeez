@@ -24,6 +24,7 @@ public final class R {
         public static final int file=0x7f020000;
         public static final int folder=0x7f020001;
         public static final int ic_launcher=0x7f020002;
+        public static final int squeez48x48=0x7f020003;
     }
     public static final class id {
         public static final int GridViewArchiveButtonsLayout=0x7f080008;
