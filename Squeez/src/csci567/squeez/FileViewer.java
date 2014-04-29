@@ -7,10 +7,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -23,17 +26,17 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ListViewer extends Activity implements OnClickListener, OnLongClickListener, OnCheckedChangeListener {
+public class FileViewer extends Activity implements OnClickListener, OnLongClickListener, OnCheckedChangeListener {
 
 	public static final int BUTTON_ID_OFFSET = 8192000;
 	public static final int CHECKBOX_ID_OFFSET = BUTTON_ID_OFFSET / 2;
@@ -44,6 +47,7 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 			btnManage, btnArchive;
 	Context context;
 	TextView dir_text;
+	Boolean selectMode;
 	Boolean getFolderMode;
 	
 	String directory;
@@ -51,14 +55,18 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	ArrayList<String> toManage, storedManage;
 	LinearLayout manageLayout, archiveLayout, optionButtonSpacer;
 	ScrollView layout;
-	private ListView Lview;
 	String [] list_items;
+	ViewType viewType;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//Get the view type
+		Intent intent = getIntent();
+		viewType = (ViewType)intent.getSerializableExtra("ViewType");
 		setContentView(R.layout.activity_view);
 		context = this;
 		
+		selectMode = false;
 		getFolderMode = false;
 		files = new ArrayList<String>();
 		toManage = new ArrayList<String>();
@@ -137,7 +145,6 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		Toast.makeText(getBaseContext(), "EEYUP!", Toast.LENGTH_LONG).show();
 		
-		int position = info.position;
 		if(item.getItemId()==R.id.zip) {
 			//use zip function
 			Toast.makeText(getBaseContext(), "zip selected: ", Toast.LENGTH_LONG).show();
@@ -167,100 +174,206 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 	}
 	
 	public void Refresh() {
-		FileManager.List(files, directory);
-		toManage.clear();
-		layout.removeAllViews();
-		dir_text = (TextView) findViewById(R.id.dir_text);
-		dir_text.setText("current directory:" + directory);
-		int i = 0;
-		
 		LinearLayout rootLayout = new LinearLayout(this);
 		LayoutParams rootLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
-		rootLayout.setLayoutParams(rootLayoutParams);
-		rootLayout.setOrientation(LinearLayout.VERTICAL);
-		
-		//This for loop can be used to make clickable objects for each file given
-		for (String fileName : files) {
-			LinearLayout fileHolder = new LinearLayout(this);
-			fileHolder.setOrientation(LinearLayout.HORIZONTAL);
-			fileHolder.setBackgroundColor(Color.BLACK);
-			fileHolder.setId(HOLDER_ID_OFFSET + i);
-			CheckBox cbFile = new CheckBox(this);
-			ImageView imFile = new ImageView(this);
-			if (fileName.charAt(fileName.length() - 1) == '/') {
-				imFile.setBackgroundResource(R.drawable.folder);
-			} else {
-				imFile.setBackgroundResource(R.drawable.file);
-			}
-			imFile.setId(IMAGE_ID_OFFSET + i);
-			imFile.setOnClickListener(this);
-			Button btnFile = new Button(this);
-			btnFile.setId(BUTTON_ID_OFFSET + i);
-			btnFile.setText(fileName);
-			btnFile.setBackgroundColor(Color.BLACK);
-			btnFile.setTextColor(Color.WHITE);
-			btnFile.setGravity(Gravity.LEFT);
-			btnFile.setOnClickListener(this);
-			btnFile.setOnLongClickListener(this);
-			LayoutParams cbFileLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.01f);
-			LayoutParams btnFileLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.99f);
-			cbFile.setLayoutParams(cbFileLayoutParams);
-			cbFile.setId(CHECKBOX_ID_OFFSET + i);
-			cbFile.setOnCheckedChangeListener(this);
-			btnFile.setLayoutParams(btnFileLayoutParams);
-			fileHolder.setPadding(0, 5, 0, 5);
-			fileHolder.addView(cbFile);
-			fileHolder.addView(imFile);
-			fileHolder.addView(btnFile);
-			rootLayout.addView(fileHolder);
-			registerForContextMenu(btnFile);
-			i++;
-		}
-		layout.addView(rootLayout);
-		
-		
-		
-		
-		/*
-		FileManager.List(files, directory);
-		//Lview.removeAllViews();
-		
-		list_items = new String[files.size()];
-		list_items = files.toArray(list_items);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_items, list_items);
-		Lview.setAdapter(adapter);
-		registerForContextMenu(Lview);
-		Lview.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View v, int position,
-					long id) {
-				TextView txt = (TextView)v;
-				String folder = txt.getText().toString();
-			    
-			    //Load the new Directory
-			    if (folder.charAt(folder.length() - 1) == '/') {
-				    directory += folder;
-				    Refresh();
+		int i = 0;
+		int c = 0;
+		switch(viewType)
+		{
+		case LIST:
+			FileManager.List(files, directory);
+			toManage.clear();
+			layout.removeAllViews();
+			dir_text = (TextView) findViewById(R.id.dir_text);
+			dir_text.setText("current directory:" + directory);
+			
+			rootLayout.setLayoutParams(rootLayoutParams);
+			rootLayout.setOrientation(LinearLayout.VERTICAL);
+			
+			//This for loop can be used to make clickable objects for each file given
+			for (String fileName : files) {
+				LinearLayout fileHolder = new LinearLayout(this);
+				fileHolder.setOrientation(LinearLayout.HORIZONTAL);
+				fileHolder.setBackgroundColor(Color.BLACK);
+				fileHolder.setId(HOLDER_ID_OFFSET + i);
+				CheckBox cbFile = new CheckBox(this);
+				ImageView imFile = new ImageView(this);
+				if (fileName.charAt(fileName.length() - 1) == '/') {
+					imFile.setBackgroundResource(R.drawable.folder);
+				} else {
+					imFile.setBackgroundResource(R.drawable.file);
 				}
+				imFile.setId(IMAGE_ID_OFFSET + i);
+				imFile.setOnClickListener(this);
+				Button btnFile = new Button(this);
+				btnFile.setId(BUTTON_ID_OFFSET + i);
+				btnFile.setText(fileName);
+				btnFile.setBackgroundColor(Color.BLACK);
+				btnFile.setTextColor(Color.WHITE);
+				btnFile.setGravity(Gravity.LEFT);
+				btnFile.setOnClickListener(this);
+				btnFile.setOnLongClickListener(this);
+				LayoutParams cbFileLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.01f);
+				LayoutParams btnFileLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.99f);
+				cbFile.setLayoutParams(cbFileLayoutParams);
+				cbFile.setId(CHECKBOX_ID_OFFSET + i);
+				cbFile.setOnCheckedChangeListener(this);
+				btnFile.setLayoutParams(btnFileLayoutParams);
+				fileHolder.setPadding(0, 5, 0, 5);
+				fileHolder.addView(cbFile);
+				fileHolder.addView(imFile);
+				fileHolder.addView(btnFile);
+				rootLayout.addView(fileHolder);
+				registerForContextMenu(btnFile);
+				i++;
+			}
+			layout.addView(rootLayout);
+			break;
+		case GRID:
+			FileManager.List(files, directory);
+			toManage.clear();
+			layout.removeAllViews();
+			dir_text = (TextView) findViewById(R.id.dir_text);
+			dir_text.setText("current directory:" + directory);
+			
+			//Determine how many columns to use based upon screen width
+			int maxCols = 0;
+			DisplayMetrics dm = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(dm);
+			for (int width = dm.widthPixels; width > 0; width -= 240)
+			{
+				maxCols++;
+			}
+			
+			rootLayout.setLayoutParams(rootLayoutParams);
+			rootLayout.setOrientation(LinearLayout.HORIZONTAL);
+			LayoutParams vLayoutParams;
+			switch (maxCols)
+			{
+			default:
+			case 1:
+				vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+				break;
+			case 2:
+				vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.5f);
+				break;
+			case 3:
+				vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.33f);
+				break;
+			case 4:
+				vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.25f);
+				break;
+			case 5:
+				vLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.2f);
+				break;
+			}
+			
+			LinearLayout vLayout1 = new LinearLayout(this);
+			LinearLayout vLayout2 = new LinearLayout(this);
+			LinearLayout vLayout3 = new LinearLayout(this);
+			LinearLayout vLayout4 = new LinearLayout(this);
+			LinearLayout vLayout5 = new LinearLayout(this);
+			vLayout1.setLayoutParams(vLayoutParams);
+			vLayout2.setLayoutParams(vLayoutParams);
+			vLayout3.setLayoutParams(vLayoutParams);
+			vLayout4.setLayoutParams(vLayoutParams);
+			vLayout5.setLayoutParams(vLayoutParams);
+			vLayout1.setOrientation(LinearLayout.VERTICAL);
+			vLayout2.setOrientation(LinearLayout.VERTICAL);
+			vLayout3.setOrientation(LinearLayout.VERTICAL);
+			vLayout4.setOrientation(LinearLayout.VERTICAL);
+			vLayout5.setOrientation(LinearLayout.VERTICAL);
+			//This for loop can be used to make clickable objects for each file given
+			for (String fileName : files) {
 				
+				LinearLayout fileHolder = new LinearLayout(this);
+				LayoutParams fileHolderParams;
+				
+				switch (maxCols)
+				{
+				default:
+				case 1:
+					fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
+					break;
+				case 2:
+					fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.5f);
+					break;
+				case 3:
+					fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.33f);
+					break;
+				case 4:
+					fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.25f);
+					break;
+				case 5:
+					fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.2f);
+					break;
+				}
+				fileHolderParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.5f);
+				fileHolder.setLayoutParams(fileHolderParams);
+				fileHolder.setOrientation(LinearLayout.VERTICAL);
+				fileHolder.setPadding(0, 5, 0, 5);
+				fileHolder.setId(CHECKBOX_ID_OFFSET + c);
+				
+				ImageButton btnFile = new ImageButton(this);
+				btnFile.setOnClickListener(this);
+				btnFile.setOnLongClickListener(this);
+				btnFile.setId(IMAGE_ID_OFFSET + c);
+				btnFile.setBackgroundColor(Color.BLACK);
+				if (fileName.charAt(fileName.length() - 1) == '/') {
+					btnFile.setImageResource(R.drawable.folder);
+				} else {
+					btnFile.setImageResource(R.drawable.file);
+				}
+				TextView tvFile = new TextView(this);
+				tvFile.setText(fileName);
+				tvFile.setId(BUTTON_ID_OFFSET + c);
+				tvFile.setGravity(Gravity.CENTER);
+				tvFile.setEllipsize(TextUtils.TruncateAt.END);
+				tvFile.setSingleLine(true);
+				tvFile.setOnClickListener(this);
+				tvFile.setOnLongClickListener(this);
+				
+				fileHolder.addView(btnFile);
+				fileHolder.addView(tvFile);
+				if (i == 0) {
+					vLayout1.addView(fileHolder);
+				} else if (i == 1) {
+					vLayout2.addView(fileHolder);
+				} else if (i == 2) {
+					vLayout3.addView(fileHolder);
+				} else if (i == 3) {
+					vLayout4.addView(fileHolder);
+				} else if (i == 4) {
+					vLayout5.addView(fileHolder);
+				}
+				c++;
+				i++;
+				if (i >= maxCols) {
+					i = 0;
+				}
 			}
-			
-		});
-		*/
-/*		Lview.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View v,
-					int position, long id) {
-				Toast.makeText(getBaseContext(), "long click: ", Toast.LENGTH_LONG).show();
-				registerForContextMenu(v);
-				return true;
+			if (maxCols >= 1) {
+				rootLayout.addView(vLayout1);
 			}
-			
-		});*/
-	}
-	
+			if (maxCols >= 2) {
+				rootLayout.addView(vLayout2);
+			}
+			if (maxCols >= 3) {
+				rootLayout.addView(vLayout3);
+			}
+			if (maxCols >= 4) {
+				rootLayout.addView(vLayout4);
+			}
+			if (maxCols >= 5) {
+				rootLayout.addView(vLayout5);
+			}
+			layout.addView(rootLayout);
+			break;
+		default:
+			assert(false);
+		}
+	}		
+		
 	@Override
 	public void onClick(View v) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -555,18 +668,20 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 				break;
 			default:
 				String selection;
-				if (v.getId() >= IMAGE_ID_OFFSET) {
-					ImageView image = (ImageView)v;
-					int id = image.getId();
-					id -= IMAGE_ID_OFFSET;
-					id += BUTTON_ID_OFFSET;
-					Button btn = (Button) findViewById(id);
-					selection = btn.getText().toString();
-				} else { //assume button
-					Button btn = (Button)v;
-					selection = btn.getText().toString();
-				}
-				    
+				switch (viewType)
+				{
+				case LIST:
+					if (v.getId() >= IMAGE_ID_OFFSET) {
+						ImageView image = (ImageView)v;
+						int id = image.getId();
+						id -= IMAGE_ID_OFFSET;
+						id += BUTTON_ID_OFFSET;
+						Button btn = (Button) findViewById(id);
+						selection = btn.getText().toString();
+					} else { //assume button
+						Button btn = (Button)v;
+						selection = btn.getText().toString();
+					}
 				    //Load the new Directory
 				    if (selection.charAt(selection.length() - 1) == '/') {
 					    directory += selection;
@@ -575,13 +690,86 @@ public class ListViewer extends Activity implements OnClickListener, OnLongClick
 						FileManager.Open(directory + selection, this);
 					}
 				    break;
+				case GRID:
+					if (selectMode) {
+						int id = 0;
+						TextView tvFile;
+						ImageButton image;
+						if (v.getId() >= IMAGE_ID_OFFSET) {
+							image = (ImageButton)v;
+							id = image.getId();
+							id -= IMAGE_ID_OFFSET;
+							int textId = id + BUTTON_ID_OFFSET;
+							tvFile = (TextView) findViewById(textId);						
+						} else { //assume textview
+							tvFile = (TextView)v;
+							id = tvFile.getId();
+							id -= BUTTON_ID_OFFSET;
+							int imageId = id + IMAGE_ID_OFFSET;
+							image = (ImageButton) findViewById(imageId);
+						}
+						
+						selection = directory + tvFile.getText().toString();
+						
+						int holderId = id + CHECKBOX_ID_OFFSET;
+						LinearLayout fileHolder = (LinearLayout) findViewById(holderId);
+						
+						if (toManage.contains(selection)) {
+							toManage.remove(selection);
+							fileHolder.setBackgroundColor(Color.BLACK);
+							image.setBackgroundColor(Color.BLACK);
+						} else {
+							toManage.add(selection);
+							fileHolder.setBackgroundColor(Color.BLUE);
+							image.setBackgroundColor(Color.BLUE);
+						}
+						break;
+					} else {
+						if (v.getId() >= IMAGE_ID_OFFSET) {
+							ImageButton image = (ImageButton)v;
+							int id = image.getId();
+							id -= IMAGE_ID_OFFSET;
+							id += BUTTON_ID_OFFSET;
+							TextView tvFile = (TextView) findViewById(id);
+							selection = tvFile.getText().toString();
+						} else { //assume button
+							TextView tvFile = (TextView)v;
+							selection = tvFile.getText().toString();
+						}
+					    //Load the new Directory
+					    if (selection.charAt(selection.length() - 1) == '/') {
+						    directory += selection;
+						    Refresh();
+						} else { //treat as a file
+							FileManager.Open(directory + selection, this);
+						}
+					    break;
+					}
+				default:
+					assert(false);
+				}
+				break;
 		}
 	}
 	
 	@Override
 	public boolean onLongClick(View v) {
-		Toast.makeText(getBaseContext(), "long click: ", Toast.LENGTH_LONG).show();
-		//registerForContextMenu(v);
+		switch (viewType)
+		{
+		case LIST: //doesn't make use of Long Click
+			break;
+		case GRID:
+			if (!selectMode) {
+				selectMode = true;
+				Toast.makeText(getBaseContext(), "Select Mode Enabled", Toast.LENGTH_LONG).show();
+			} else {
+				selectMode = false;
+				Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
+			}
+			break;
+		default:
+			assert(false);
+		}
 		return true;
 	}
 	

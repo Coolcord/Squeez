@@ -23,22 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="csci567.squeez.ListViewer"
-            android:label="@string/title_activity_list_view"
-            android:parentActivityName="csci567.squeez.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="csci567.squeez.MainActivity" />
-        </activity>
-         <activity
-            android:name="csci567.squeez.GridViewer"
-            android:label="@string/title_activity_grid_view"
-            android:parentActivityName="csci567.squeez.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="csci567.squeez.MainActivity" />
-        </activity>
+        <activity android:name="FileViewer" android:theme="@android:style/Theme.Black.NoTitleBar"></activity>
     </application>
 
 </manifest>

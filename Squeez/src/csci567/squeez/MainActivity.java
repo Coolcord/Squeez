@@ -30,12 +30,10 @@ public class MainActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v)
 	{
-		Intent list_intent = new Intent(this, ListViewer.class);
-		//Bundle list_extras = list_intent.getExtras();
-		//list_extras.putSerializable("ViewType", ViewType.LIST);
-		Intent grid_intent = new Intent(this, GridViewer.class);
-		//Bundle grid_extras = list_intent.getExtras();
-		//grid_extras.putSerializable("ViewType", ViewType.GRID);
+		Intent list_intent = new Intent(this, FileViewer.class);
+		list_intent.putExtra("ViewType", ViewType.LIST);
+		Intent grid_intent = new Intent(this, FileViewer.class);
+		grid_intent.putExtra("ViewType", ViewType.GRID);
 		
 		switch(v.getId()) {
 		case R.id.list_but:
