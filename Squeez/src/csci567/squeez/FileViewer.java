@@ -178,14 +178,17 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		LayoutParams rootLayoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1.0f);
 		int i = 0;
 		int c = 0;
+		LinearLayout directoryLayout;
 		switch(viewType)
 		{
 		case LIST:
 			FileManager.List(files, directory);
 			toManage.clear();
 			layout.removeAllViews();
+			directoryLayout = (LinearLayout) findViewById(R.id.LayoutDirectoryLocation);
+			directoryLayout.setBackgroundColor(Color.DKGRAY);
 			dir_text = (TextView) findViewById(R.id.dir_text);
-			dir_text.setText(getResources().getString(R.string.d_text) + directory);
+			dir_text.setText(directory);
 			
 			rootLayout.setLayoutParams(rootLayoutParams);
 			rootLayout.setOrientation(LinearLayout.VERTICAL);
@@ -234,8 +237,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			FileManager.List(files, directory);
 			toManage.clear();
 			layout.removeAllViews();
+			directoryLayout = (LinearLayout) findViewById(R.id.LayoutDirectoryLocation);
+			directoryLayout.setBackgroundColor(Color.DKGRAY);
 			dir_text = (TextView) findViewById(R.id.dir_text);
-			dir_text.setText(getResources().getString(R.string.d_text) + directory);
+			dir_text.setText(directory);
 			
 			//Determine how many columns to use based upon screen width
 			int maxCols = 0;
