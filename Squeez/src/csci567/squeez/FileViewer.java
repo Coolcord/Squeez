@@ -47,12 +47,14 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			btnManage, btnArchive;
 	Context context;
 	TextView dir_text;
-	Boolean selectMode;
-	Boolean getFolderMode;
+	Boolean selectMode = false;
+	Boolean getFolderMode = false;
 	
-	String directory;
-	ArrayList<String> files;
-	ArrayList<String> toManage, storedManage;
+	String directory = "/";
+	ArrayList<String> files = new ArrayList<String>();
+	ArrayList<String> toManage = new ArrayList<String>();
+	ArrayList<String> storedManage = new ArrayList<String>();
+	
 	LinearLayout manageLayout, archiveLayout, optionButtonSpacer;
 	ScrollView layout;
 	String [] list_items;
@@ -65,13 +67,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		viewType = (ViewType)intent.getSerializableExtra("ViewType");
 		setContentView(R.layout.activity_view);
 		context = this;
-		
-		selectMode = false;
-		getFolderMode = false;
-		files = new ArrayList<String>();
-		toManage = new ArrayList<String>();
-		storedManage = new ArrayList<String>();
-		directory = "/";
 	}
 	
 	@Override
