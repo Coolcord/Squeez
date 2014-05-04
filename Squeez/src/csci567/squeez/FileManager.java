@@ -34,10 +34,12 @@ public class FileManager {
 		if (fileList != null) {
 			for (int i = 0; i < fileList.length; i++) {
 				folder = new File(directory + fileList[i]);
-				if (folder.isDirectory()) {
-					fileList[i] += "/";
+				if (folder.canRead()) { //only show files that can be read
+					if (folder.isDirectory()) {
+						fileList[i] += "/";
+					}
+					files.add(fileList[i]);
 				}
-				files.add(fileList[i]);
 			}
 		}
 		
