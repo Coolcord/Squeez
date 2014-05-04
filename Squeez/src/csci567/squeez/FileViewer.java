@@ -259,6 +259,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			{
 				maxCols++;
 			}
+			if (maxCols > 5) {
+				maxCols = 5;
+			}
 			
 			rootLayout.setLayoutParams(rootLayoutParams);
 			rootLayout.setOrientation(LinearLayout.HORIZONTAL);
