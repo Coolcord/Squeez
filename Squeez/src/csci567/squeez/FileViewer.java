@@ -1,6 +1,6 @@
 package csci567.squeez;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -51,9 +51,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	Boolean getFolderMode = false;
 	
 	String directory = "/";
-	ArrayList<String> files = new ArrayList<String>();
-	ArrayList<String> toManage = new ArrayList<String>();
-	ArrayList<String> storedManage = new ArrayList<String>();
+	LinkedList<String> files = new LinkedList<String>();
+	LinkedList<String> toManage = new LinkedList<String>();
+	LinkedList<String> storedManage = new LinkedList<String>();
 	
 	LinearLayout manageLayout, archiveLayout, optionButtonSpacer;
 	ScrollView layout;

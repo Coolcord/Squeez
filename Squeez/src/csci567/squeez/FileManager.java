@@ -6,19 +6,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.widget.Toast;
 
 public class FileManager {
 	
-	public static Status List(ArrayList<String> files, String directory) {
+	public static Status List(LinkedList<String> files, String directory) {
 		assert(files != null);
 		
-		files.clear(); //clear out the ArrayList before using it
+		files.clear(); //clear out the LinkedList before using it
 		
 		File folder = new File(directory);
 		String[] fileList = null;
@@ -31,7 +30,7 @@ public class FileManager {
 		}
 		fileList = folder.list(); //get the files in the folder
 		
-		//Add all of the files to the ArrayList
+		//Add all of the files to the LinkedList
 		if (fileList != null) {
 			for (int i = 0; i < fileList.length; i++) {
 				folder = new File(directory + fileList[i]);
@@ -45,7 +44,7 @@ public class FileManager {
 		return Status.OK;
 	}
 	
-	public static Status Move(ArrayList<String> files, String source, String destination) {
+	public static Status Move(LinkedList<String> files, String source, String destination) {
 		assert(files != null);
 		
 		Status s = Status.OK;
@@ -93,7 +92,7 @@ public class FileManager {
 		return Status.OK;
 	}
 	
-	public static Status Rename(ArrayList<String> files, String source, String newName) {
+	public static Status Rename(LinkedList<String> files, String source, String newName) {
 		assert(files != null);
 		
 		Status s = Status.OK;
@@ -156,7 +155,7 @@ public class FileManager {
 		}
 	}
 	
-	public static Status Copy(ArrayList<String> files, String source, String destination) {
+	public static Status Copy(LinkedList<String> files, String source, String destination) {
 		assert(files != null);
 		
 		Status s = Status.OK;
@@ -253,7 +252,7 @@ public class FileManager {
 		return Status.OK;
 	}
 	
-	public static Status Delete(ArrayList<String> files, String source) {
+	public static Status Delete(LinkedList<String> files, String source) {
 		assert(files != null);
 		
 		Status s = Status.OK;
@@ -291,7 +290,7 @@ public class FileManager {
 		
 		//Call delete on all files in the folder
 		if (file.isDirectory()) {
-			ArrayList<String> files = new ArrayList<String>();
+			LinkedList<String> files = new LinkedList<String>();
 			Status s = List(files, source);
 			assert(s == Status.OK);
 			for (String fileName : files) {

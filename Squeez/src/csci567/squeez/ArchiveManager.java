@@ -7,14 +7,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ArchiveManager {
 
-	public static Status Zip(ArrayList<String> files, String archive) {
+	public static Status Zip(LinkedList<String> files, String archive) {
 		assert(files != null);
 		assert(files.size() > 0);
 		
