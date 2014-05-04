@@ -23,7 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="FileViewer" android:theme="@android:style/Theme.Black.NoTitleBar"></activity>
+        <activity
+            android:name="FileViewer" android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden">
+        </activity>
     </application>
 
 </manifest>

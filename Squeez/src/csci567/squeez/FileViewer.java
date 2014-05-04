@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,9 +27,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -69,6 +70,12 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		setContentView(R.layout.activity_view);
 		context = this;
 	}
+	
+	@Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      super.onConfigurationChanged(newConfig);
+      Refresh(); //call refresh on screen rotation
+    }
 	
 	@Override
 	public void onResume() {
