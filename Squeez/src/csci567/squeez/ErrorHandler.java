@@ -56,22 +56,12 @@ public class ErrorHandler {
 			case NO_FILES_SPECIFIED:
 				alertDialogBuilder.setMessage("No files have been selected!");
 				break;
+			case SAME_DIRECTORY:
+				alertDialogBuilder.setMessage("Cannot move to the same location!");
+				break;
 			default:
 				assert(false);
 		}
-		
-		/*
-		// Setting Icon to Dialog
-		alertDialog.setIcon(R.drawable.tick);
-		
-		// Setting OK Button
-		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) {
-		        // Write your code here to execute after dialog closed
-		        Toast.makeText(getApplicationContext(), "You clicked on OK", Toast.LENGTH_SHORT).show();
-		        }
-		});
-		*/
 		
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();

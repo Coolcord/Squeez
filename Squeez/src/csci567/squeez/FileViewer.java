@@ -51,6 +51,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	Boolean getFolderMode = false;
 	
 	String directory = "/";
+	String previousDirectory = "/"; //used for storedManage
 	LinkedList<String> files = new LinkedList<String>();
 	LinkedList<String> toManage = new LinkedList<String>();
 	LinkedList<String> storedManage = new LinkedList<String>();
@@ -481,6 +482,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnDelete.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.GONE);
 					btnManage.setText("Cancel");
+					previousDirectory = directory;
 					//push these on stored to be moved later
 					for (String file : toManage) {
 						storedManage.add(file);
@@ -495,6 +497,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
+						storedManage.clear();
+						break;
+					} else if (previousDirectory == directory) {
+						ErrorHandler.ShowError(Status.SAME_DIRECTORY, "", context);
 						storedManage.clear();
 						break;
 					}
@@ -543,6 +549,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnDelete.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.GONE);
 					btnManage.setText("Cancel");
+					previousDirectory = directory;
 					//push these on stored to be moved later
 					for (String file : toManage) {
 						storedManage.add(file);
@@ -666,6 +673,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnZip.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.GONE);
 					btnManage.setText("Cancel");
+					previousDirectory = directory;
 					//push these on stored to be moved later
 					for (String file : toManage) {
 						storedManage.add(file);
