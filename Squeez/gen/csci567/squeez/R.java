@@ -27,6 +27,7 @@ public final class R {
         public static final int music=0x7f020003;
         public static final int squeez=0x7f020004;
         public static final int video=0x7f020005;
+        public static final int zip=0x7f020006;
     }
     public static final class id {
         public static final int LayoutDirectoryLocation=0x7f080005;

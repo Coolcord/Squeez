@@ -388,13 +388,34 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		switch (v.getId())
 		{
 			case R.id.btnManage:
-				archiveLayout.setVisibility(View.GONE);
-				if (manageLayout.getVisibility() == View.GONE) {
-					manageLayout.setVisibility(View.VISIBLE);
-					optionButtonSpacer.setVisibility(View.INVISIBLE);
-				} else {
+				if (getFolderMode) { //Cancel get folder mode
+					getFolderMode = false;
+					archiveLayout.setVisibility(View.GONE);
 					manageLayout.setVisibility(View.GONE);
-					optionButtonSpacer.setVisibility(View.GONE);
+					btnArchive.setVisibility(View.VISIBLE);
+					btnMove.setVisibility(View.VISIBLE);
+					btnCopy.setVisibility(View.VISIBLE);
+					btnRename.setVisibility(View.VISIBLE);
+					btnDelete.setVisibility(View.VISIBLE);
+					btnZip.setVisibility(View.VISIBLE);
+					btnUnzip.setVisibility(View.VISIBLE);
+					btnMove.setText(R.string.move);
+					btnCopy.setText(R.string.copy);
+					btnRename.setText(R.string.rename);
+					btnDelete.setText(R.string.delete);
+					btnZip.setText(R.string.zip);
+					btnUnzip.setText(R.string.unzip);
+					btnManage.setText(R.string.manage);
+					storedManage.clear();
+				} else {
+					archiveLayout.setVisibility(View.GONE);
+					if (manageLayout.getVisibility() == View.GONE) {
+						manageLayout.setVisibility(View.VISIBLE);
+						optionButtonSpacer.setVisibility(View.INVISIBLE);
+					} else {
+						manageLayout.setVisibility(View.GONE);
+						optionButtonSpacer.setVisibility(View.GONE);
+					}
 				}
 				break;
 			case R.id.btnArchive:
@@ -458,6 +479,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnRename.setVisibility(View.GONE);
 					btnCopy.setVisibility(View.GONE);
 					btnDelete.setVisibility(View.GONE);
+					btnArchive.setVisibility(View.GONE);
+					btnManage.setText("Cancel");
 					//push these on stored to be moved later
 					for (String file : toManage) {
 						storedManage.add(file);
@@ -468,6 +491,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnRename.setVisibility(View.VISIBLE);
 					btnCopy.setVisibility(View.VISIBLE);
 					btnDelete.setVisibility(View.VISIBLE);
+					btnArchive.setVisibility(View.VISIBLE);
+					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
 						storedManage.clear();
@@ -516,6 +541,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnRename.setVisibility(View.GONE);
 					btnMove.setVisibility(View.GONE);
 					btnDelete.setVisibility(View.GONE);
+					btnArchive.setVisibility(View.GONE);
+					btnManage.setText("Cancel");
 					//push these on stored to be moved later
 					for (String file : toManage) {
 						storedManage.add(file);
@@ -526,6 +553,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnRename.setVisibility(View.VISIBLE);
 					btnMove.setVisibility(View.VISIBLE);
 					btnDelete.setVisibility(View.VISIBLE);
+					btnArchive.setVisibility(View.VISIBLE);
+					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
 						storedManage.clear();
@@ -635,6 +664,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					selectMode = false;
 					btnUnzip.setText("Unzip Files Here");
 					btnZip.setVisibility(View.GONE);
+					btnArchive.setVisibility(View.GONE);
+					btnManage.setText("Cancel");
 					//push these on stored to be moved later
 					for (String file : toManage) {
 						storedManage.add(file);
@@ -643,6 +674,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					getFolderMode = false;
 					btnUnzip.setText(R.string.unzip);
 					btnZip.setVisibility(View.VISIBLE);
+					btnArchive.setVisibility(View.VISIBLE);
+					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
 						break;
