@@ -188,13 +188,33 @@ public class FileManager {
 		FileInputStream inStream = null;
 		FileOutputStream outStream = null;
 		
-		//Delete the destination file if it exists
+		//Append (Copy) to the filename if it exists
 		File newFile = new File(destination);
 		if (newFile.exists()) {
-			Status s = Delete(destination);
-			if (s != Status.OK){
-				return s;
-			}
+			String names[] = destination.split("\\.");
+	        String extension = "";
+	        String path = "";
+	        int appendCount = 0;
+	        if (names.length > 1) { //filename has an extension
+	        	extension = names[names.length-1];
+	        	for (int i = 0; i < names.length-1; i++) {
+		        	path += names[i];
+		        }
+	        	do {
+		        	appendCount++;
+		        	destination = path;
+		        	for (int i = 0; i < appendCount; i++) {
+		        		destination += " (Copy)"; //add (Copy) to the filename
+		        	}
+		        	destination += "." + extension;
+		        	newFile = new File(destination);
+	        	} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
+	        } else { //no extension
+	        	do {
+					destination += " (Copy)"; //add (Copy) to the filename
+					newFile = new File(destination);
+				} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
+	        }
 		} else {
 			//Build the destination path
 			String[] name = source.split("/");
