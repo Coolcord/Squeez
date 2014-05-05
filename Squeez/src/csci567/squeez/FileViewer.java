@@ -1,5 +1,6 @@
 package csci567.squeez;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import android.annotation.TargetApi;
@@ -12,18 +13,13 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -37,7 +33,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FileViewer extends Activity implements OnClickListener, OnLongClickListener, OnCheckedChangeListener {
+public class FileViewer extends Activity implements OnClickListener, OnLongClickListener {
 
 	public static final int BUTTON_ID_OFFSET = 8192000;
 	public static final int CHECKBOX_ID_OFFSET = BUTTON_ID_OFFSET / 2;
@@ -56,6 +52,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	LinkedList<String> files = new LinkedList<String>();
 	LinkedList<String> toManage = new LinkedList<String>();
 	LinkedList<String> storedManage = new LinkedList<String>();
+	LinkedList<String> checkedFiles = new LinkedList<String>();
+	Hashtable<String, Integer> checkBoxes = new Hashtable<String, Integer>();
 	
 	LinearLayout manageLayout, archiveLayout, optionButtonSpacer;
 	ScrollView layout;
@@ -130,11 +128,11 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		int i = 0;
 		int c = 0;
 		LinearLayout directoryLayout;
+		checkBoxes.clear();
 		switch(viewType)
 		{
 		case LIST:
 			FileManager.List(files, directory);
-			toManage.clear();
 			layout.removeAllViews();
 			directoryLayout = (LinearLayout) findViewById(R.id.LayoutDirectoryLocation);
 			directoryLayout.setBackgroundColor(Color.DKGRAY);
@@ -171,7 +169,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 				LayoutParams btnFileLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 0.99f);
 				cbFile.setLayoutParams(cbFileLayoutParams);
 				cbFile.setId(CHECKBOX_ID_OFFSET + i);
-				cbFile.setOnCheckedChangeListener(this);
+				cbFile.setOnClickListener(this);
+				checkBoxes.put(directory + fileName, CHECKBOX_ID_OFFSET + i);
 				btnFile.setLayoutParams(btnFileLayoutParams);
 				fileHolder.setPadding(0, 5, 0, 5);
 				fileHolder.addView(cbFile);
@@ -185,7 +184,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		case GRID:
 			selectMode = false;
 			FileManager.List(files, directory);
-			toManage.clear();
 			layout.removeAllViews();
 			directoryLayout = (LinearLayout) findViewById(R.id.LayoutDirectoryLocation);
 			directoryLayout.setBackgroundColor(Color.DKGRAY);
@@ -272,6 +270,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 				fileHolder.setOrientation(LinearLayout.VERTICAL);
 				fileHolder.setPadding(0, 5, 0, 5);
 				fileHolder.setId(CHECKBOX_ID_OFFSET + c);
+				checkBoxes.put(directory + fileName, CHECKBOX_ID_OFFSET + c);
 				
 				ImageButton btnFile = new ImageButton(this);
 				btnFile.setOnClickListener(this);
@@ -331,6 +330,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		default:
 			assert(false);
 		}
+		checkMarkedFiles(true);
 	}		
 		
 	@Override
@@ -358,7 +358,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnZip.setText(R.string.zip);
 					btnUnzip.setText(R.string.unzip);
 					btnManage.setText(R.string.manage);
-					storedManage.clear();
+					checkMarkedFiles(false);
 				} else {
 					archiveLayout.setVisibility(View.GONE);
 					if (manageLayout.getVisibility() == View.GONE) {
@@ -452,11 +452,11 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
-						storedManage.clear();
+						checkMarkedFiles(false);
 						break;
 					} else if (previousDirectory == directory) {
 						ErrorHandler.ShowError(Status.SAME_DIRECTORY, "", context);
-						storedManage.clear();
+						checkMarkedFiles(false);
 						break;
 					}
 					alertDialogBuilder = new AlertDialog.Builder(this);                 
@@ -479,10 +479,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								if (s == Status.OK) {
 									Toast.makeText(context, "Files Moved", Toast.LENGTH_LONG).show();
 								}
-								storedManage.clear();
+								checkMarkedFiles(false);
 								Refresh();
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
-								storedManage.clear();
+								checkMarkedFiles(false);
 								Refresh();
 							}
 						}
@@ -522,7 +522,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
-						storedManage.clear();
+						checkMarkedFiles(false);
 						break;
 					}
 					alertDialogBuilder = new AlertDialog.Builder(this);                 
@@ -545,10 +545,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								if (s == Status.OK) {
 									Toast.makeText(context, "Files Copied", Toast.LENGTH_LONG).show();
 								}
-								storedManage.clear();
+								checkMarkedFiles(false);
 								Refresh();
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
-								storedManage.clear();
+								checkMarkedFiles(false);
 								Refresh();
 							}
 						}
@@ -671,10 +671,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								if (s == Status.OK) {
 									Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
 								}
-								storedManage.clear();
+								checkMarkedFiles(false);
 								Refresh();
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
-								storedManage.clear();
+								checkMarkedFiles(false);
 								Refresh();
 							}
 						}
@@ -697,9 +697,22 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						id += BUTTON_ID_OFFSET;
 						Button btn = (Button) findViewById(id);
 						selection = btn.getText().toString();
-					} else { //assume button
+					} else if (v.getId() >= BUTTON_ID_OFFSET) { //assume button
 						Button btn = (Button)v;
 						selection = btn.getText().toString();
+					} else { //assume checkbox
+						CheckBox cb = (CheckBox)v;
+						int btnId = v.getId() - CHECKBOX_ID_OFFSET + BUTTON_ID_OFFSET;
+						Button btn = (Button) findViewById(btnId);
+						checkFile(v.getId(), cb.isChecked());
+						if (cb.isChecked()) {
+							toManage.add(directory + btn.getText());
+							checkedFiles.add(directory + btn.getText());
+						} else {
+							toManage.remove(directory + btn.getText());
+							checkedFiles.remove(directory + btn.getText());
+						}
+						break;
 					}
 				    //Load the new Directory
 				    if (selection.charAt(selection.length() - 1) == '/') {
@@ -738,10 +751,12 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						
 						if (toManage.contains(selection)) {
 							toManage.remove(selection);
+							checkedFiles.remove(selection);
 							fileHolder.setBackgroundColor(Color.BLACK);
 							image.setBackgroundColor(Color.BLACK);
 						} else {
 							toManage.add(selection);
+							checkedFiles.add(selection);
 							fileHolder.setBackgroundColor(Color.BLUE);
 							image.setBackgroundColor(Color.BLUE);
 						}
@@ -791,7 +806,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			} else {
 				selectMode = false;
 				Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
-				Refresh();
 			}
 			break;
 		default:
@@ -805,7 +819,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		if (selectMode) {
 			selectMode = false;
 			Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
-			Refresh();
 		} else if (directory == "/") {
 			super.onBackPressed();
 		} else {
@@ -825,26 +838,102 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			Refresh();
 		}
 	}
-
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	
+	private void checkFile(int id, Boolean check) {
 		
-		int btnId = buttonView.getId();
+		Button btn = null;
+		ImageButton img = null;
+		int imageId = id - CHECKBOX_ID_OFFSET + IMAGE_ID_OFFSET;
+		int btnId = id;
 		btnId -= CHECKBOX_ID_OFFSET;
 		btnId += BUTTON_ID_OFFSET;
-		int holderId = buttonView.getId();
-		holderId -= CHECKBOX_ID_OFFSET;
-		holderId += HOLDER_ID_OFFSET;
-		Button btn = (Button) findViewById(btnId);
+		int holderId = id;
+		switch (viewType) {
+		case LIST:
+			holderId -= CHECKBOX_ID_OFFSET;
+			holderId += HOLDER_ID_OFFSET;
+			CheckBox cb = (CheckBox) findViewById(id);
+			if (cb != null) {
+				cb.setChecked(check);
+			}
+			btn = (Button) findViewById(btnId);
+			break;
+		case GRID:
+			img = (ImageButton) findViewById(imageId);
+			break;
+		default:
+			assert(false);
+			break;
+		}
+		
 		LinearLayout fileHolder = (LinearLayout) findViewById(holderId);
-		if (isChecked) {
-			toManage.add(directory + btn.getText());
-			btn.setBackgroundColor(Color.BLUE);
+		if (check) {
+			if (btn != null) {
+				btn.setBackgroundColor(Color.BLUE);
+			}
+			if (img != null) {
+				img.setBackgroundColor(Color.BLUE);
+			}
 			fileHolder.setBackgroundColor(Color.BLUE);
 		} else {
-			toManage.remove(directory + btn.getText());
-			btn.setBackgroundColor(Color.BLACK);
+			if (btn != null) {
+				btn.setBackgroundColor(Color.BLACK);
+			}
+			if (img != null) {
+				img.setBackgroundColor(Color.BLACK);
+			}
 			fileHolder.setBackgroundColor(Color.BLACK);
-		}	
+		}
+	}
+	
+	private void checkMarkedFiles(Boolean check) {
+		
+		for (String fileName : checkedFiles) {
+			int id = 0;
+			int btnId = 0;
+			String currentFile = "";
+			switch (viewType) {
+			case LIST:
+				if (checkBoxes.containsKey(fileName)) {
+					id = checkBoxes.get(fileName);
+				} else {
+					continue;
+				}
+				btnId = id - CHECKBOX_ID_OFFSET + BUTTON_ID_OFFSET;
+				Button btn = (Button) findViewById(btnId);
+				currentFile = directory + btn.getText().toString();
+				if (currentFile.contentEquals(fileName)) {
+					CheckBox cb = (CheckBox) findViewById(id);
+					if (cb != null) {
+						checkFile(id, check);
+					}
+				}
+				break;
+			case GRID:
+				if (checkBoxes.containsKey(fileName)) {
+					id = checkBoxes.get(fileName);
+				} else {
+					continue;
+				}
+				btnId = id - CHECKBOX_ID_OFFSET + BUTTON_ID_OFFSET;
+				TextView tv = (TextView) findViewById(btnId);
+				currentFile = directory + tv.getText().toString();
+				if (currentFile.contentEquals(fileName)) {
+					LinearLayout linearLayout = (LinearLayout) findViewById(id);
+					if (linearLayout != null) {
+						checkFile(id, check);
+					}
+				}
+				break;
+			default:
+				assert(false);
+				break;
+			}
+		}
+		if (!check) {
+			storedManage.clear();
+			toManage.clear();
+			checkedFiles.clear();
+		}
 	}
 }
