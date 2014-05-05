@@ -133,9 +133,11 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		manageLayout.setVisibility(View.GONE);
-		archiveLayout.setVisibility(View.GONE);
-		optionButtonSpacer.setVisibility(View.GONE);
+		if (!getFolderMode) {
+			manageLayout.setVisibility(View.GONE);
+			archiveLayout.setVisibility(View.GONE);
+			optionButtonSpacer.setVisibility(View.GONE);
+		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -489,6 +491,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					}
 					getFolderMode = true;
 					selectMode = false;
+					checkMarkedFiles(true);
 					btnMove.setText("Move Files Here");
 					btnRename.setVisibility(View.GONE);
 					btnCopy.setVisibility(View.GONE);
@@ -566,6 +569,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					}
 					getFolderMode = true;
 					selectMode = false;
+					checkMarkedFiles(true);
 					btnCopy.setText("Copy Files Here");
 					btnRename.setVisibility(View.GONE);
 					btnMove.setVisibility(View.GONE);
@@ -712,6 +716,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					}
 					getFolderMode = true;
 					selectMode = false;
+					checkMarkedFiles(true);
 					btnUnzip.setText("Unzip Files Here");
 					btnZip.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.GONE);
@@ -884,13 +889,15 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		case LIST: //doesn't make use of Long Click
 			break;
 		case GRID:
-			if (!selectMode) {
-				selectMode = true;
-				Toast.makeText(context, "Select Mode Enabled", Toast.LENGTH_SHORT).show();
-				onClick(v);
-			} else {
-				selectMode = false;
-				Toast.makeText(context, "Select Mode Disabled", Toast.LENGTH_SHORT).show();
+			if (!getFolderMode) {
+				if (!selectMode) {
+					selectMode = true;
+					Toast.makeText(context, "Select Mode Enabled", Toast.LENGTH_SHORT).show();
+					onClick(v);
+				} else {
+					selectMode = false;
+					Toast.makeText(context, "Select Mode Disabled", Toast.LENGTH_SHORT).show();
+				}
 			}
 			break;
 		default:
@@ -950,13 +957,23 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		
 		LinearLayout fileHolder = (LinearLayout) findViewById(holderId);
 		if (check) {
-			if (btn != null) {
-				btn.setBackgroundColor(Color.BLUE);
+			if (getFolderMode) {
+				if (btn != null) {
+					btn.setBackgroundColor(Color.parseColor("#0B610B"));
+				}
+				if (img != null) {
+					img.setBackgroundColor(Color.parseColor("#0B610B"));
+				}
+				fileHolder.setBackgroundColor(Color.parseColor("#0B610B"));
+			} else {
+				if (btn != null) {
+					btn.setBackgroundColor(Color.BLUE);
+				}
+				if (img != null) {
+					img.setBackgroundColor(Color.BLUE);
+				}
+				fileHolder.setBackgroundColor(Color.BLUE);
 			}
-			if (img != null) {
-				img.setBackgroundColor(Color.BLUE);
-			}
-			fileHolder.setBackgroundColor(Color.BLUE);
 		} else {
 			if (btn != null) {
 				btn.setBackgroundColor(Color.BLACK);
@@ -1010,6 +1027,19 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			default:
 				assert(false);
 				break;
+			}
+		}
+		//Enable or disable checkboxes depending upon if getFolderMode is enabled
+		if (viewType != viewType.GRID) {
+			for (int id : checkBoxes.values()) {
+				CheckBox cb = (CheckBox) findViewById(id);
+				if (cb != null) {
+					if (getFolderMode) {
+						cb.setEnabled(false);
+					} else {
+						cb.setEnabled(true);
+					}
+				}
 			}
 		}
 		if (!check) {
