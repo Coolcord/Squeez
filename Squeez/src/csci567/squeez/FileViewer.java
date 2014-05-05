@@ -113,9 +113,15 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			Button btnSelectSpacer = (Button) findViewById(R.id.btnSelectSpacer);
 			btnSelectSpacer.setVisibility(View.GONE);
 		} else {
-			btnSelect.setVisibility(View.VISIBLE);
-			Button btnSelectSpacer = (Button) findViewById(R.id.btnSelectSpacer);
-			btnSelectSpacer.setVisibility(View.INVISIBLE);
+			if (getFolderMode) {
+				btnSelect.setVisibility(View.GONE);
+				Button btnSelectSpacer = (Button) findViewById(R.id.btnSelectSpacer);
+				btnSelectSpacer.setVisibility(View.GONE);
+			} else {
+				btnSelect.setVisibility(View.VISIBLE);
+				Button btnSelectSpacer = (Button) findViewById(R.id.btnSelectSpacer);
+				btnSelectSpacer.setVisibility(View.INVISIBLE);
+			}
 		}
 		
 		Refresh();
