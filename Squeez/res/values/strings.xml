@@ -18,6 +18,7 @@
     <string name="manage">Manage</string>
     <string name="archive">Archive</string>
     <string name="rename">Rename</string>
+    <string name="select">Select</string>
     
 
 </resources>

@@ -41,7 +41,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	public static final int IMAGE_ID_OFFSET = BUTTON_ID_OFFSET * 4;
 	
 	Button btnRename, btnMove, btnCopy, btnDelete, btnZip, btnUnzip,
-			btnManage, btnArchive;
+			btnManage, btnArchive, btnSelect;
 	Context context;
 	TextView dir_text;
 	Boolean selectMode = false;
@@ -92,6 +92,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		btnDelete = (Button) findViewById(R.id.btnDelete);
 		btnZip = (Button) findViewById(R.id.btnZip);
 		btnUnzip = (Button) findViewById(R.id.btnUnzip);
+		btnSelect = (Button) findViewById(R.id.btnSelect);
 		
 		btnManage.setOnClickListener(this);
 		btnArchive.setOnClickListener(this);
@@ -101,6 +102,14 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		btnDelete.setOnClickListener(this);
 		btnZip.setOnClickListener(this);
 		btnUnzip.setOnClickListener(this);
+		btnSelect.setOnClickListener(this);
+		
+		//Only show the select button in grid view mode
+		if (viewType != ViewType.GRID) {
+			btnSelect.setVisibility(View.GONE);
+			Button btnSelectSpacer = (Button) findViewById(R.id.btnSelectSpacer);
+			btnSelectSpacer.setVisibility(View.GONE);
+		}
 		
 		Refresh();
 	}
@@ -345,6 +354,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					archiveLayout.setVisibility(View.GONE);
 					manageLayout.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.VISIBLE);
+					if (viewType == ViewType.GRID) {
+						btnSelect.setVisibility(View.VISIBLE);
+					}
 					btnMove.setVisibility(View.VISIBLE);
 					btnCopy.setVisibility(View.VISIBLE);
 					btnRename.setVisibility(View.VISIBLE);
@@ -378,6 +390,15 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 				} else {
 					archiveLayout.setVisibility(View.GONE);
 					optionButtonSpacer.setVisibility(View.GONE);
+				}
+				break;
+			case R.id.btnSelect:
+				if (!selectMode) {
+					selectMode = true;
+					Toast.makeText(getBaseContext(), "Select Mode Enabled", Toast.LENGTH_LONG).show();
+				} else {
+					selectMode = false;
+					Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
 				}
 				break;
 			case R.id.btnRename:
@@ -436,6 +457,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnCopy.setVisibility(View.GONE);
 					btnDelete.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.GONE);
+					btnSelect.setVisibility(View.GONE);
 					btnManage.setText("Cancel");
 					previousDirectory = directory;
 					//push these on stored to be moved later
@@ -449,6 +471,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnCopy.setVisibility(View.VISIBLE);
 					btnDelete.setVisibility(View.VISIBLE);
 					btnArchive.setVisibility(View.VISIBLE);
+					if (viewType == ViewType.GRID) {
+						btnSelect.setVisibility(View.VISIBLE);
+					}
 					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
@@ -506,6 +531,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnMove.setVisibility(View.GONE);
 					btnDelete.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.GONE);
+					btnSelect.setVisibility(View.GONE);
 					btnManage.setText("Cancel");
 					previousDirectory = directory;
 					//push these on stored to be moved later
@@ -519,6 +545,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnMove.setVisibility(View.VISIBLE);
 					btnDelete.setVisibility(View.VISIBLE);
 					btnArchive.setVisibility(View.VISIBLE);
+					if (viewType == ViewType.GRID) {
+						btnSelect.setVisibility(View.VISIBLE);
+					}
 					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
@@ -637,6 +666,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnUnzip.setText("Unzip Files Here");
 					btnZip.setVisibility(View.GONE);
 					btnArchive.setVisibility(View.GONE);
+					btnSelect.setVisibility(View.GONE);
 					btnManage.setText("Cancel");
 					previousDirectory = directory;
 					//push these on stored to be moved later
@@ -648,6 +678,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					btnUnzip.setText(R.string.unzip);
 					btnZip.setVisibility(View.VISIBLE);
 					btnArchive.setVisibility(View.VISIBLE);
+					if (viewType == ViewType.GRID) {
+						btnSelect.setVisibility(View.VISIBLE);
+					}
 					btnManage.setText(R.string.manage);
 					if (storedManage.size() <= 0) {
 						ErrorHandler.ShowError(Status.NO_FILES_SPECIFIED, "", context);
@@ -816,10 +849,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	
 	@Override
 	public void onBackPressed() {
-		if (selectMode) {
-			selectMode = false;
-			Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
-		} else if (directory == "/") {
+		if (directory == "/") {
 			super.onBackPressed();
 		} else {
 			//Build the destination path

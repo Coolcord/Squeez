@@ -88,6 +88,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
                 android:text="@string/archive" />
+            
+            <Button
+                android:id="@+id/btnSelectSpacer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:text="@string/select" />
         </LinearLayout>
     </LinearLayout>
 
@@ -172,6 +179,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
                 android:text="@string/archive" />
+            
+            <Button
+                android:id="@+id/btnSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:text="@string/select" />
         </LinearLayout>
     
 </RelativeLayout>
