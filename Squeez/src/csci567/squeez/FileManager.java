@@ -377,9 +377,18 @@ public class FileManager {
             intent.setDataAndType(Uri.fromFile(file), "video/*");
         } else {
             // Unknown file
-            intent.setDataAndType(Uri.fromFile(file), "text/plain");
+            intent.setDataAndType(Uri.fromFile(file), "*/*");
         }
-        context.startActivity(intent);
+        try {
+        	context.startActivity(intent);
+        } catch (Exception e) {
+        	intent.setDataAndType(Uri.fromFile(file), "*/*"); //no application for specified filetype
+        	try {
+            	context.startActivity(intent);
+            } catch (Exception e1) { //something went wrong during launch
+            	return Status.COULD_NOT_OPEN;
+            }
+        }
 		return Status.OK;
 	}
 }

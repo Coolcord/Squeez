@@ -50,6 +50,9 @@ public class ErrorHandler {
 			case COULD_NOT_ZIP:
 				alertDialogBuilder.setMessage("Could not zip " + fileName);
 				break;
+			case COULD_NOT_OPEN:
+				alertDialogBuilder.setMessage("Could not open " + fileName);
+				break;
 			case CAN_ONLY_RENAME_ONE:
 				alertDialogBuilder.setMessage("Only one file can be renamed at a time!");
 				break;

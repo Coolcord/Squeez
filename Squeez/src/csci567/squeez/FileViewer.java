@@ -706,7 +706,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					    directory += selection;
 					    Refresh();
 					} else { //treat as a file
-						FileManager.Open(directory + selection, this);
+						Status s = FileManager.Open(directory + selection, context);
+						if (s != Status.OK) {
+							ErrorHandler.ShowError(s, selection, context);
+						}
 					}
 				    break;
 				case GRID:
@@ -760,7 +763,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						    directory += selection;
 						    Refresh();
 						} else { //treat as a file
-							FileManager.Open(directory + selection, this);
+							Status s = FileManager.Open(directory + selection, context);
+							if (s != Status.OK) {
+								ErrorHandler.ShowError(s, selection, context);
+							}
 						}
 					    break;
 					}
