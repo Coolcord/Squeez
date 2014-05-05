@@ -123,64 +123,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		getMenuInflater().inflate(R.menu.list_view, menu);
 		return true;
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.context_menu, menu);
-	}
-	
-	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		Toast.makeText(getBaseContext(), "EEYUP!", Toast.LENGTH_LONG).show();
-		
-		if(item.getItemId()==R.id.zip) {
-			//use zip function
-			Toast.makeText(getBaseContext(), "zip selected: ", Toast.LENGTH_LONG).show();
-			return true;
-		}
-		if(item.getItemId()==R.id.open) {
-			//use open function
-			Toast.makeText(getBaseContext(), "open selected: ", Toast.LENGTH_LONG).show();
-			return true;
-		}
-		if(item.getItemId()==R.id.move) {
-			//use move function
-			Toast.makeText(getBaseContext(), "move selected: ", Toast.LENGTH_LONG).show();
-			return true;
-		}
-		if(item.getItemId()==R.id.copy) {
-			//use copy function
-			Toast.makeText(getBaseContext(), "copy selected: ", Toast.LENGTH_LONG).show();
-			return true;
-		}
-		if(item.getItemId()==R.id.delete) {
-			//use delete function
-			Toast.makeText(getBaseContext(), "delete selected: ", Toast.LENGTH_LONG).show();
-			return true;
-		}
-		return true;
-	}
 	
 	public void Refresh() {
 		LinearLayout rootLayout = new LinearLayout(this);
@@ -236,7 +178,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 				fileHolder.addView(imFile);
 				fileHolder.addView(btnFile);
 				rootLayout.addView(fileHolder);
-				registerForContextMenu(btnFile);
 				i++;
 			}
 			layout.addView(rootLayout);
@@ -450,8 +391,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 				}
 				alertDialogBuilder = new AlertDialog.Builder(this);                 
 				alertDialogBuilder.setTitle("Rename");  
-				alertDialogBuilder.setMessage("Enter a new name: ");                
-				final EditText renameInput = new EditText(this); 
+				alertDialogBuilder.setMessage("Enter a new name: ");
+				final EditText renameInput = new EditText(this);
+				String[] names = toManage.getFirst().split("/");
+				renameInput.setText(names[names.length-1]);
 			 	DialogInterface.OnClickListener renameDiag = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -468,6 +411,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							if (s == Status.OK) {
 								Toast.makeText(context, "File Renamed", Toast.LENGTH_LONG).show();
 							}
+							Refresh();
+						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 							Refresh();
 						}
 					}
@@ -536,6 +481,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								}
 								storedManage.clear();
 								Refresh();
+							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
+								storedManage.clear();
+								Refresh();
 							}
 						}
 					};
@@ -599,6 +547,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								}
 								storedManage.clear();
 								Refresh();
+							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
+								storedManage.clear();
+								Refresh();
 							}
 						}
 					};
@@ -631,6 +582,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
 							}
 							Refresh();
+						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
+							Refresh();
 						}
 					}
 				};
@@ -660,6 +613,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							} else {
 								Toast.makeText(context, "Archive Created", Toast.LENGTH_LONG).show();
 							}
+							Refresh();
+						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 							Refresh();
 						}
 					}
@@ -716,6 +671,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								if (s == Status.OK) {
 									Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
 								}
+								storedManage.clear();
+								Refresh();
+							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 								storedManage.clear();
 								Refresh();
 							}

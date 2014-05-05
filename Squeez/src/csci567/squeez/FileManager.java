@@ -34,7 +34,7 @@ public class FileManager {
 		if (fileList != null) {
 			for (int i = 0; i < fileList.length; i++) {
 				folder = new File(directory + fileList[i]);
-				if (folder.canRead()) { //only show files that can be read
+				if (folder.canRead()) { //only show files that can be accessed
 					if (folder.isDirectory()) {
 						fileList[i] += "/";
 					}
@@ -342,39 +342,37 @@ public class FileManager {
         String name[] = filePath.split("\\.");
         String extension = name[name.length-1];
         
-        //List of file types from:
-        //http://www.androidsnippets.com/open-any-type-of-file-with-default-intent
-        if (extension == ".doc" || extension == ".docx") {
+        if (extension.contentEquals("doc") || extension.contentEquals("docx")) {
             // Word document
             intent.setDataAndType(Uri.fromFile(file), "application/msword");
-        } else if (extension == ".pdf") {
+        } else if (extension.contentEquals("pdf")) {
             // PDF file
             intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-        } else if (extension == ".ppt" || extension == ".pptx") {
+        } else if (extension.contentEquals("ppt") || extension.contentEquals("pptx")) {
             // Powerpoint file
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.ms-powerpoint");
-        } else if (extension == ".xls" || extension == ".xlsx") {
+        } else if (extension.contentEquals("xls") || extension.contentEquals("xlsx")) {
             // Excel file
             intent.setDataAndType(Uri.fromFile(file), "application/vnd.ms-excel");
-        } else if (extension == ".zip" || extension == ".rar") {
+        } else if (extension.contentEquals("zip") || extension.contentEquals("rar")) {
             // Archive file
             intent.setDataAndType(Uri.fromFile(file), "application/zip");
-        } else if (extension == ".rtf") {
+        } else if (extension.contentEquals("rtf")) {
             // RTF file
             intent.setDataAndType(Uri.fromFile(file), "application/rtf");
-        } else if (extension == ".wav" || extension == ".mp3") {
+        } else if (extension.contentEquals("wav") || extension.contentEquals("mp3")) {
             // WAV audio file
             intent.setDataAndType(Uri.fromFile(file), "audio/x-wav");
-        } else if (extension == ".gif") {
+        } else if (extension.contentEquals("gif")) {
             // GIF file
             intent.setDataAndType(Uri.fromFile(file), "image/gif");
-        } else if (extension == ".jpg" || extension == ".jpeg" || extension == ".png") {
+        } else if (extension.contentEquals("jpg") || extension.contentEquals("jpeg") || extension.contentEquals("png")) {
             // JPG file
             intent.setDataAndType(Uri.fromFile(file), "image/jpeg");
-        } else if (extension == ".txt") {
+        } else if (extension.contentEquals("txt")) {
             // Text file
             intent.setDataAndType(Uri.fromFile(file), "text/plain");
-        } else if (extension == ".3gp" || extension == ".mpg" || extension == ".mpeg" || extension == ".mpe" || extension == ".mp4" || extension == ".avi") {
+        } else if (extension.contentEquals("3gp") || extension.contentEquals("mpg") || extension.contentEquals("mpeg") || extension.contentEquals("mpe") || extension.contentEquals("mp4") || extension.contentEquals("avi")) {
             // Video files
             intent.setDataAndType(Uri.fromFile(file), "video/*");
         } else {

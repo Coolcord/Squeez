@@ -23,6 +23,16 @@ public class ArchiveManager {
 		FileOutputStream outputArchive = null;
 		Status s = Status.OK;
 		
+		//Set extension to .zip if it isn't .zip already
+		String names[] = archive.split("\\.");
+        String extension = "";
+        if (names.length > 1) { //filename has an extension
+        	extension = names[names.length-1];
+        }
+        if (!extension.contentEquals("zip")) {
+        	archive += ".zip";
+        }
+		
 		//Check to see if the archive exists
 		File archiveFile = new File(archive);
 		if (archiveFile.exists()) {
