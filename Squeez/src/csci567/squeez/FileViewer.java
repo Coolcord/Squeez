@@ -13,17 +13,20 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -114,9 +117,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		Refresh();
 	}
 
-	/**
-	 * Set up the {@link android.app.ActionBar}, if the API is available.
-	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setupActionBar() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -127,8 +127,42 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.list_view, menu);
+		getMenuInflater().inflate(R.menu.options_menu, menu);
 		return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		manageLayout.setVisibility(View.GONE);
+		archiveLayout.setVisibility(View.GONE);
+		optionButtonSpacer.setVisibility(View.GONE);
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		case R.id.clear_selected:
+			checkMarkedFiles(false);
+			Toast.makeText(context, "All Files Unselected", Toast.LENGTH_SHORT).show();
+			break;
+		case R.id.change_view_mode:
+			if (viewType == ViewType.LIST) {
+				viewType = ViewType.GRID;
+				Toast.makeText(context, "Switched to Grid View", Toast.LENGTH_SHORT).show();
+			} else {
+				viewType = ViewType.LIST;
+				Toast.makeText(context, "Switched to List View", Toast.LENGTH_SHORT).show();
+			}
+			onResume();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	public void Refresh() {
@@ -395,10 +429,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			case R.id.btnSelect:
 				if (!selectMode) {
 					selectMode = true;
-					Toast.makeText(getBaseContext(), "Select Mode Enabled", Toast.LENGTH_LONG).show();
+					Toast.makeText(context, "Select Mode Enabled", Toast.LENGTH_SHORT).show();
 				} else {
 					selectMode = false;
-					Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
+					Toast.makeText(context, "Select Mode Disabled", Toast.LENGTH_SHORT).show();
 				}
 				break;
 			case R.id.btnRename:
@@ -436,6 +470,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 							Refresh();
 						}
+						manageLayout.setVisibility(View.GONE);
+						archiveLayout.setVisibility(View.GONE);
+						optionButtonSpacer.setVisibility(View.GONE);
 					}
 				};
 				alertDialogBuilder.setView(renameInput);
@@ -510,6 +547,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								checkMarkedFiles(false);
 								Refresh();
 							}
+							manageLayout.setVisibility(View.GONE);
+							archiveLayout.setVisibility(View.GONE);
+							optionButtonSpacer.setVisibility(View.GONE);
 						}
 					};
 					alertDialogBuilder.setPositiveButton("Yes", moveDiag);
@@ -580,6 +620,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								checkMarkedFiles(false);
 								Refresh();
 							}
+							manageLayout.setVisibility(View.GONE);
+							archiveLayout.setVisibility(View.GONE);
+							optionButtonSpacer.setVisibility(View.GONE);
 						}
 					};
 					alertDialogBuilder.setPositiveButton("Yes", copyDiag);
@@ -614,6 +657,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 							Refresh();
 						}
+						manageLayout.setVisibility(View.GONE);
+						archiveLayout.setVisibility(View.GONE);
+						optionButtonSpacer.setVisibility(View.GONE);
 					}
 				};
 				alertDialogBuilder.setPositiveButton("Yes", deleteDiag);
@@ -646,6 +692,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 							Refresh();
 						}
+						manageLayout.setVisibility(View.GONE);
+						archiveLayout.setVisibility(View.GONE);
+						optionButtonSpacer.setVisibility(View.GONE);
 					}
 				};
 				alertDialogBuilder.setView(archiveInput);
@@ -710,6 +759,9 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 								checkMarkedFiles(false);
 								Refresh();
 							}
+							manageLayout.setVisibility(View.GONE);
+							archiveLayout.setVisibility(View.GONE);
+							optionButtonSpacer.setVisibility(View.GONE);
 						}
 					};
 					alertDialogBuilder.setPositiveButton("Yes", unzipDiag);
@@ -834,11 +886,11 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		case GRID:
 			if (!selectMode) {
 				selectMode = true;
-				Toast.makeText(getBaseContext(), "Select Mode Enabled", Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Select Mode Enabled", Toast.LENGTH_SHORT).show();
 				onClick(v);
 			} else {
 				selectMode = false;
-				Toast.makeText(getBaseContext(), "Select Mode Disabled", Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Select Mode Disabled", Toast.LENGTH_SHORT).show();
 			}
 			break;
 		default:

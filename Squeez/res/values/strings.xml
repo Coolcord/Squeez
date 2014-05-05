@@ -19,6 +19,8 @@
     <string name="archive">Archive</string>
     <string name="rename">Rename</string>
     <string name="select">Select</string>
+    <string name="change_view_mode">Change View Mode</string>
+    <string name="clear_selected">Clear Selected</string>
     
 
 </resources>
