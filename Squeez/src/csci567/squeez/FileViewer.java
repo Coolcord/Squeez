@@ -112,6 +112,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			btnSelect.setVisibility(View.GONE);
 			Button btnSelectSpacer = (Button) findViewById(R.id.btnSelectSpacer);
 			btnSelectSpacer.setVisibility(View.GONE);
+		} else {
+			btnSelect.setVisibility(View.VISIBLE);
+			Button btnSelectSpacer = (Button) findViewById(R.id.btnSelectSpacer);
+			btnSelectSpacer.setVisibility(View.INVISIBLE);
 		}
 		
 		Refresh();
@@ -155,6 +159,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			if (viewType == ViewType.LIST) {
 				viewType = ViewType.GRID;
 				Toast.makeText(context, "Switched to Grid View", Toast.LENGTH_SHORT).show();
+				
 			} else {
 				viewType = ViewType.LIST;
 				Toast.makeText(context, "Switched to List View", Toast.LENGTH_SHORT).show();
