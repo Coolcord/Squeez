@@ -712,11 +712,11 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 											if (s != Status.OK) {
 												final Status error = s;
 												final String fileName = file;
-												final Runnable showToast = new Runnable() {
+												final Runnable showError = new Runnable() {
 												    public void run() {
 												    	ErrorHandler.ShowError(error, fileName, context);												}
 												};
-												runOnUiThread(showToast);
+												runOnUiThread(showError);
 												break;
 											}
 										}
@@ -759,19 +759,37 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == DialogInterface.BUTTON_POSITIVE) {
-							Status s = Status.OK;
-							for (String file : toManage) {
-								s = FileManager.Delete(file);
-								if (s != Status.OK) {
-									ErrorHandler.ShowError(s, file, context);
-									break;
-								}
-							}
-							if (s == Status.OK) {
-								Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
-							}
-							checkMarkedFiles(false);
-							Refresh();
+							new Thread(new Runnable() {
+						        public void run() {
+						        	mDialog.setMessage("Delete files...");
+									runOnUiThread(showBusyDialog);
+						        	Status s = Status.OK;
+									for (String file : toManage) {
+										s = FileManager.Delete(file);
+										if (s != Status.OK) {
+											final Status error = s;
+											final String fileName = file;
+											final Runnable showError = new Runnable() {
+											    public void run() {
+											    	ErrorHandler.ShowError(error, fileName, context);												}
+											};
+											runOnUiThread(showError);
+											break;
+										}
+									}
+									
+									if (s == Status.OK) {
+										final Runnable showToast = new Runnable() {
+										    public void run() {
+										    	Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
+											}
+										};
+										runOnUiThread(showToast);
+									}
+									runOnUiThread(finishJob);
+									runOnUiThread(dismissBusyDialog);
+						        }
+							}).start();
 						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 							checkMarkedFiles(false);
 							Refresh();
