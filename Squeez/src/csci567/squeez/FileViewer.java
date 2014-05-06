@@ -64,13 +64,19 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	String [] list_items;
 	ViewType viewType = ViewType.LIST;
 	
+	/*
 	final ProgressDialog mDialog = new ProgressDialog(context);
 	final Runnable showBusyDialog = new Runnable() {
 		public void run() {
 	        mDialog.show();
 		}
 	};
-    
+	final Runnable dismissBusyDialog = new Runnable() {
+		public void run() {
+	        mDialog.dismiss();
+		}
+	};
+	*/
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		firstBoot = prefs.getBoolean("FirstBoot", true);
 		int intViewType = prefs.getInt("ViewType", 0);
 		
-		mDialog.setCancelable(false);
+		//mDialog.setCancelable(false);
 		
 		switch (intViewType) {
 		case 0:
@@ -692,28 +698,37 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if (which == DialogInterface.BUTTON_POSITIVE) {
-								Status s = Status.OK;
-								for (String file : storedManage) {
-									String[] names = file.split("/");
-									String location = directory + names[names.length-1];
-									s = FileManager.Copy(file, location);
-									if (s != Status.OK) {
-										ErrorHandler.ShowError(s, file, context);
-										break;
-									}
-								}
-								if (s == Status.OK) {
-									Toast.makeText(context, "Files Copied", Toast.LENGTH_LONG).show();
-								}
-								checkMarkedFiles(false);
-								Refresh();
+								new Thread(new Runnable() {
+							        public void run() {
+							        	//runOnUiThread(showBusyDialog);
+										Status s = Status.OK;
+										for (String file : storedManage) {
+											String[] names = file.split("/");
+											String location = directory + names[names.length-1];
+											s = FileManager.Copy(file, location);
+											/*
+											if (s != Status.OK) {
+												ErrorHandler.ShowError(s, file, context);
+												break;
+											}
+											*/
+										}
+										/*
+										if (s == Status.OK) {
+											Toast.makeText(context, "Files Copied", Toast.LENGTH_LONG).show();
+										}
+										runOnUiThread(finishJob);
+										*/
+										//runOnUiThread(dismissBusyDialog);
+							        }
+							    }).start();
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 								checkMarkedFiles(false);
 								Refresh();
+								manageLayout.setVisibility(View.GONE);
+								archiveLayout.setVisibility(View.GONE);
+								optionButtonSpacer.setVisibility(View.GONE);
 							}
-							manageLayout.setVisibility(View.GONE);
-							archiveLayout.setVisibility(View.GONE);
-							optionButtonSpacer.setVisibility(View.GONE);
 						}
 					};
 					alertDialogBuilder.setPositiveButton("Yes", copyDiag);
