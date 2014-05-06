@@ -626,21 +626,39 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if (which == DialogInterface.BUTTON_POSITIVE) {
-								Status s = Status.OK;
-								for (String file : storedManage) {
-									String[] names = file.split("/");
-									String location = directory + names[names.length-1];
-									s = FileManager.Move(file, location);
-									if (s != Status.OK) {
-										ErrorHandler.ShowError(s, file, context);
-										break;
-									}
-								}
-								if (s == Status.OK) {
-									Toast.makeText(context, "Files Moved", Toast.LENGTH_LONG).show();
-								}
-								checkMarkedFiles(false);
-								Refresh();
+								new Thread(new Runnable() {
+							        public void run() {
+							        	mDialog.setMessage("Moving Files...");
+							        	runOnUiThread(showBusyDialog);
+										Status s = Status.OK;
+										for (String file : storedManage) {
+											String[] names = file.split("/");
+											String location = directory + names[names.length-1];
+											s = FileManager.Move(file, location);
+											if (s != Status.OK) {
+												final Status error = s;
+												final String fileName = file;
+												final Runnable showError = new Runnable() {
+												    public void run() {
+												    	ErrorHandler.ShowError(error, fileName, context);												}
+												};
+												runOnUiThread(showError);
+												break;
+											}
+										}
+										
+										if (s == Status.OK) {
+											final Runnable showToast = new Runnable() {
+											    public void run() {
+											    	Toast.makeText(context, "Files Moved", Toast.LENGTH_LONG).show();
+												}
+											};
+											runOnUiThread(showToast);
+										}
+										runOnUiThread(finishJob);
+										runOnUiThread(dismissBusyDialog);
+							        }
+								}).start();
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 								checkMarkedFiles(false);
 								Refresh();
@@ -702,7 +720,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							if (which == DialogInterface.BUTTON_POSITIVE) {
 								new Thread(new Runnable() {
 							        public void run() {
-							        	mDialog.setMessage("Copying files...");
+							        	mDialog.setMessage("Copying Files...");
 							        	runOnUiThread(showBusyDialog);
 										Status s = Status.OK;
 										for (String file : storedManage) {
@@ -736,10 +754,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 								checkMarkedFiles(false);
 								Refresh();
-								manageLayout.setVisibility(View.GONE);
-								archiveLayout.setVisibility(View.GONE);
-								optionButtonSpacer.setVisibility(View.GONE);
 							}
+							manageLayout.setVisibility(View.GONE);
+							archiveLayout.setVisibility(View.GONE);
+							optionButtonSpacer.setVisibility(View.GONE);
 						}
 					};
 					alertDialogBuilder.setPositiveButton("Yes", copyDiag);
@@ -761,7 +779,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						if (which == DialogInterface.BUTTON_POSITIVE) {
 							new Thread(new Runnable() {
 						        public void run() {
-						        	mDialog.setMessage("Delete files...");
+						        	mDialog.setMessage("Deleting Files...");
 									runOnUiThread(showBusyDialog);
 						        	Status s = Status.OK;
 									for (String file : toManage) {
