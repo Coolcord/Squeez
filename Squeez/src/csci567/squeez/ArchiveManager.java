@@ -57,6 +57,11 @@ public class ArchiveManager {
 		//Perform the zip
 		try {
 			for (String fileName : files) {
+				File isDir = new File(fileName);
+				if(isDir.isDirectory()){
+					ZipFolder(isDir, zip, archive);
+				}
+				else{
 				inputFile = new FileInputStream(fileName);
 	//			bufferIn = new BufferedInputStream(inputFile, 1024);
 				zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
@@ -75,6 +80,7 @@ public class ArchiveManager {
 				//bufferIn.close();
 				zip.closeEntry();
 				inputFile.close();
+				}
 			}
 			zip.close();
 			outputArchive.close();
@@ -103,6 +109,64 @@ public class ArchiveManager {
 			return Status.COULD_NOT_ZIP;
 		}
 		
+		return Status.OK;
+	}
+	
+	public static Status ZipFolder(File folder, ZipOutputStream zip, String archive) {
+		
+		//Log.d("zip func", "folder zip path: " + folder.getAbsolutePath());
+		//Log.d("zip func", "archive path: " + archive);
+		LinkedList<String> files = new LinkedList<String>();
+		FileManager.List(files, folder.toString() + "/");
+		byte bytes[] = new byte[1024];
+		Status s = Status.OK;
+		FileInputStream inputFile = null;
+		ZipEntry zipEntry = null;
+		
+		//Perform the zip
+		try {
+			for (String fileName : files) {
+				File isDir = new File(fileName);
+				if(isDir.isDirectory()) {
+					ZipFolder(isDir, zip, archive);
+				}
+				else {
+			//		Log.d("zip func", "file names: " + fileName);
+					inputFile = new FileInputStream(fileName);
+					zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
+					zip.putNextEntry(zipEntry);
+					int length = 0;
+					while ((length = inputFile.read(bytes)) > 0) {
+						zip.write(bytes, 0, length);
+					}
+					zip.closeEntry();
+					inputFile.close();
+				}
+			}
+			zip.close();
+		} catch (IOException e) { //something went wrong
+			e.printStackTrace();
+			try {
+				inputFile.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				inputFile.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				zip.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			s = FileManager.Delete(archive);
+			if (s != Status.OK) {
+				return s;
+			}
+			return Status.COULD_NOT_ZIP;
+		}
 		return Status.OK;
 	}
 	
