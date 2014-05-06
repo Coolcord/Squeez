@@ -8,23 +8,21 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -49,6 +47,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	TextView dir_text;
 	Boolean selectMode = false;
 	Boolean getFolderMode = false;
+	Boolean firstBoot = true;
 	
 	String directory = "/";
 	String previousDirectory = "/"; //used for storedManage
@@ -57,19 +56,77 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	LinkedList<String> storedManage = new LinkedList<String>();
 	LinkedList<String> checkedFiles = new LinkedList<String>();
 	Hashtable<String, Integer> checkBoxes = new Hashtable<String, Integer>();
+	SharedPreferences prefs;
 	
 	LinearLayout manageLayout, archiveLayout, optionButtonSpacer;
 	ScrollView layout;
 	String [] list_items;
-	ViewType viewType;
+	ViewType viewType = ViewType.LIST;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//Get the view type
-		Intent intent = getIntent();
-		viewType = (ViewType)intent.getSerializableExtra("ViewType");
+		
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		firstBoot = prefs.getBoolean("FirstBoot", true);
+		int intViewType = prefs.getInt("ViewType", 0);
+		
+		switch (intViewType) {
+		case 0:
+			firstBoot = true;
+			break;
+		case 1:
+			viewType = ViewType.LIST;
+			break;
+		case 2:
+			viewType = ViewType.GRID;
+			break;
+		default:
+			assert(false);
+			break;
+		}
+		
+		if (firstBoot) {
+			showFirstBootScreen();
+		} else {
+			setContentView(R.layout.activity_view);
+		}
+		context = this;
+	}
+	
+	private void showFirstBootScreen() {
+		setContentView(R.layout.activity_main);
+		Button btnList = (Button) findViewById(R.id.list_but);
+		Button btnGrid = (Button) findViewById(R.id.grid_but);
+		btnList.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				viewType = ViewType.LIST;
+				firstBoot = false;
+				final SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean("FirstBoot", firstBoot);
+				editor.putInt("ViewType", 1);
+				editor.commit();
+				showView();
+			}
+		});
+		btnGrid.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				viewType = ViewType.GRID;
+				firstBoot = false;
+				final SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean("FirstBoot", firstBoot);
+				editor.putInt("ViewType", 2);
+				editor.commit();
+				showView();
+			}
+		});
+	}
+	
+	private void showView() {
 		setContentView(R.layout.activity_view);
 		context = this;
+		onResume();
 	}
 	
 	@Override
@@ -81,6 +138,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+		if (firstBoot) {
+			return;
+		}
 		
 		layout = (ScrollView) findViewById(R.id.ViewScrollLayout);
 		manageLayout = (LinearLayout)findViewById(R.id.ViewManageButtonsLayout);
@@ -162,14 +223,17 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			Toast.makeText(context, "All Files Unselected", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.change_view_mode:
+			final SharedPreferences.Editor editor = prefs.edit();
 			if (viewType == ViewType.LIST) {
 				viewType = ViewType.GRID;
+				editor.putInt("ViewType", 2);
 				Toast.makeText(context, "Switched to Grid View", Toast.LENGTH_SHORT).show();
-				
 			} else {
 				viewType = ViewType.LIST;
+				editor.putInt("ViewType", 1);
 				Toast.makeText(context, "Switched to List View", Toast.LENGTH_SHORT).show();
 			}
+			editor.commit();
 			onResume();
 			break;
 		default:
