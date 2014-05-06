@@ -13,7 +13,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dip"
         android:layout_gravity="center"
         android:layout_weight="0.5"
         android:orientation="vertical" >
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Welcome to Squeez!"
+                android:text="@string/welcome"
                 android:textSize="30sp"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -55,15 +55,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Programmed By:"
+                android:text="@string/programmed_by"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Cordell Heath"
+                android:text="@string/programmer1"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             
             <TextView
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Cameron Hastey"
+                android:text="@string/programmer2"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             
             <TextView
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Tona Thao"
+                android:text="@string/programmer3"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             
         </LinearLayout>
@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Choose a view to get started:"
+            android:text="@string/get_started"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout

@@ -21,6 +21,12 @@
     <string name="select">Select</string>
     <string name="change_view_mode">Change View Mode</string>
     <string name="clear_selected">Clear Selected</string>
+    <string name="welcome">Welcome to Squeez!</string>
+    <string name="programmed_by">Programmed By:</string>
+    <string name="programmer1">Cordell Heath</string>
+    <string name="programmer2">Cameron Hastey</string>
+    <string name="programmer3">Tona Thao</string>
+    <string name="get_started">Choose a view to get started:</string>
     
 
 </resources>
