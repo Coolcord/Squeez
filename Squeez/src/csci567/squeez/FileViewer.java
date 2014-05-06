@@ -702,7 +702,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							if (which == DialogInterface.BUTTON_POSITIVE) {
 								new Thread(new Runnable() {
 							        public void run() {
-							        	mDialog.setTitle("Copy");
 							        	mDialog.setMessage("Copying files...");
 							        	runOnUiThread(showBusyDialog);
 										Status s = Status.OK;
