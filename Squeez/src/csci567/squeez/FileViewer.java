@@ -835,16 +835,33 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (which == DialogInterface.BUTTON_POSITIVE) {
-							String archive = archiveInput.getText().toString();
-							Status s = Status.OK;
-							s = ArchiveManager.Zip(toManage, directory + archive);
-							if (s != Status.OK) {
-								ErrorHandler.ShowError(s, archive, context);
-							} else {
-								Toast.makeText(context, "Archive Created", Toast.LENGTH_LONG).show();
-							}
-							checkMarkedFiles(false);
-							Refresh();
+							new Thread(new Runnable() {
+						        public void run() {
+						        	mDialog.setMessage("Zipping Files...");
+						        	runOnUiThread(showBusyDialog);
+									String archive = archiveInput.getText().toString();
+									Status s = Status.OK;
+									s = ArchiveManager.Zip(toManage, directory + archive);
+									if (s != Status.OK) {
+										final Status error = s;
+										final String fileName = archive;
+										final Runnable showError = new Runnable() {
+										    public void run() {
+										    	ErrorHandler.ShowError(error, fileName, context);												}
+										};
+										runOnUiThread(showError);
+									} else {
+										final Runnable showToast = new Runnable() {
+										    public void run() {
+										    	Toast.makeText(context, "Archive Created", Toast.LENGTH_LONG).show();
+											}
+										};
+										runOnUiThread(showToast);
+									}
+									runOnUiThread(finishJob);
+									runOnUiThread(dismissBusyDialog);
+						        }
+							}).start();
 						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 							checkMarkedFiles(false);
 							Refresh();
@@ -900,19 +917,37 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if (which == DialogInterface.BUTTON_POSITIVE) {
-								Status s = Status.OK;
-								for (String file : storedManage) {
-									s = ArchiveManager.Unzip(file, directory);
-									if (s != Status.OK) {
-										ErrorHandler.ShowError(s, file, context);
-										break;
-									}
-								}
-								if (s == Status.OK) {
-									Toast.makeText(context, "Archive Unzipped", Toast.LENGTH_LONG).show();
-								}
-								checkMarkedFiles(false);
-								Refresh();
+								new Thread(new Runnable() {
+							        public void run() {
+							        	mDialog.setMessage("Unzipping Files...");
+										runOnUiThread(showBusyDialog);
+										Status s = Status.OK;
+										for (String file : storedManage) {
+											s = ArchiveManager.Unzip(file, directory);
+											if (s != Status.OK) {
+												final Status error = s;
+												final String fileName = file;
+												final Runnable showError = new Runnable() {
+												    public void run() {
+												    	ErrorHandler.ShowError(error, fileName, context);												}
+												};
+												runOnUiThread(showError);
+												break;
+											}
+										}
+										
+										if (s == Status.OK) {
+											final Runnable showToast = new Runnable() {
+											    public void run() {
+											    	Toast.makeText(context, "Files Unzipped", Toast.LENGTH_LONG).show();
+												}
+											};
+											runOnUiThread(showToast);
+										}
+										runOnUiThread(finishJob);
+										runOnUiThread(dismissBusyDialog);
+							        }
+								}).start();
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
 								checkMarkedFiles(false);
 								Refresh();
