@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -62,6 +63,15 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	ScrollView layout;
 	String [] list_items;
 	ViewType viewType = ViewType.LIST;
+	
+	final ProgressDialog mDialog = new ProgressDialog(context);
+	final Runnable showBusyDialog = new Runnable() {
+		public void run() {
+	        mDialog.show();
+		}
+	};
+    
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,6 +79,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		firstBoot = prefs.getBoolean("FirstBoot", true);
 		int intViewType = prefs.getInt("ViewType", 0);
+		
+		mDialog.setCancelable(false);
 		
 		switch (intViewType) {
 		case 0:
@@ -732,8 +744,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							if (s == Status.OK) {
 								Toast.makeText(context, "Files Deleted", Toast.LENGTH_LONG).show();
 							}
+							checkMarkedFiles(false);
 							Refresh();
 						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
+							checkMarkedFiles(false);
 							Refresh();
 						}
 						manageLayout.setVisibility(View.GONE);
@@ -767,8 +781,10 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							} else {
 								Toast.makeText(context, "Archive Created", Toast.LENGTH_LONG).show();
 							}
+							checkMarkedFiles(false);
 							Refresh();
 						} else if (which == DialogInterface.BUTTON_NEGATIVE) {
+							checkMarkedFiles(false);
 							Refresh();
 						}
 						manageLayout.setVisibility(View.GONE);
