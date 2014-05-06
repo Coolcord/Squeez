@@ -64,20 +64,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	String [] list_items;
 	ViewType viewType = ViewType.LIST;
 	
-	/*
-	final ProgressDialog mDialog = new ProgressDialog(context);
-	final Runnable showBusyDialog = new Runnable() {
-		public void run() {
-	        mDialog.show();
-		}
-	};
-	final Runnable dismissBusyDialog = new Runnable() {
-		public void run() {
-	        mDialog.dismiss();
-		}
-	};
-	*/
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,8 +71,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		firstBoot = prefs.getBoolean("FirstBoot", true);
 		int intViewType = prefs.getInt("ViewType", 0);
-		
-		//mDialog.setCancelable(false);
 		
 		switch (intViewType) {
 		case 0:
@@ -475,6 +459,24 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	public void onClick(View v) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		AlertDialog alertDialog;
+		final ProgressDialog mDialog = new ProgressDialog(context);
+		mDialog.setCancelable(false);
+		final Runnable showBusyDialog = new Runnable() {
+		    public void run() {
+		    	mDialog.show();
+			}
+		};
+		final Runnable dismissBusyDialog = new Runnable() {
+		    public void run() {
+		    	mDialog.dismiss();
+			}
+		};
+		final Runnable finishJob = new Runnable() {
+		    public void run() {
+		    	checkMarkedFiles(false);
+		    	Refresh();
+			}
+		};
 		switch (v.getId())
 		{
 			case R.id.btnManage:
@@ -700,26 +702,36 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 							if (which == DialogInterface.BUTTON_POSITIVE) {
 								new Thread(new Runnable() {
 							        public void run() {
-							        	//runOnUiThread(showBusyDialog);
+							        	mDialog.setTitle("Copy");
+							        	mDialog.setMessage("Copying files...");
+							        	runOnUiThread(showBusyDialog);
 										Status s = Status.OK;
 										for (String file : storedManage) {
 											String[] names = file.split("/");
 											String location = directory + names[names.length-1];
 											s = FileManager.Copy(file, location);
-											/*
 											if (s != Status.OK) {
-												ErrorHandler.ShowError(s, file, context);
+												final Status error = s;
+												final String fileName = file;
+												final Runnable showToast = new Runnable() {
+												    public void run() {
+												    	ErrorHandler.ShowError(error, fileName, context);												}
+												};
+												runOnUiThread(showToast);
 												break;
 											}
-											*/
 										}
-										/*
+										
 										if (s == Status.OK) {
-											Toast.makeText(context, "Files Copied", Toast.LENGTH_LONG).show();
+											final Runnable showToast = new Runnable() {
+											    public void run() {
+											    	Toast.makeText(context, "Files Copied", Toast.LENGTH_LONG).show();
+												}
+											};
+											runOnUiThread(showToast);
 										}
 										runOnUiThread(finishJob);
-										*/
-										//runOnUiThread(dismissBusyDialog);
+										runOnUiThread(dismissBusyDialog);
 							        }
 							    }).start();
 							} else if (which == DialogInterface.BUTTON_NEGATIVE) {
