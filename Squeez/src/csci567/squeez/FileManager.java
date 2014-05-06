@@ -1,5 +1,6 @@
 package csci567.squeez;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -303,6 +304,7 @@ public class FileManager {
 	}
 	
 	public static Status Delete(String source) {
+		
 		File file = new File(source);
 		
 		//Make sure the file exists first
@@ -316,7 +318,7 @@ public class FileManager {
 			Status s = List(files, source);
 			assert(s == Status.OK);
 			for (String fileName : files) {
-				s = Delete(fileName);
+				s = Delete(source + fileName);
 				if (s != Status.OK) {
 					return s; //something went wrong... abort deletion
 				}
