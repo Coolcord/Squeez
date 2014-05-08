@@ -104,7 +104,11 @@ public class ArchiveManager {
 		
 		FileInputStream inputFile = null;
 		LinkedList<String> files = new LinkedList<String>();
-		FileManager.List(files, folder.getPath() + "/");
+		Status s = Status.OK;
+		s = FileManager.List(files, folder.getPath() + "/");
+		if (s != Status.OK) {
+			return s;
+		}
 		byte bytes[] = new byte[1024];
 		
 		//Perform the zip
@@ -112,9 +116,9 @@ public class ArchiveManager {
 			for (String fileName : files) {
 				File isDir = new File(folder.getPath() + "/" + fileName);
 				if(isDir.isDirectory()) {
-					Status status = ZipFolder(isDir, zip, archive);
-					if (status != Status.OK) {
-						return status;
+					s = ZipFolder(isDir, zip, archive);
+					if (s != Status.OK) {
+						return s;
 					}
 				} else {
 					inputFile = new FileInputStream(folder.getPath() + "/" + fileName);
