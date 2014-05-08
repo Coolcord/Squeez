@@ -251,9 +251,11 @@ public class ArchiveManager {
 						folder.mkdirs(); //recreate the folder
 					}
 				} else {
+					byte bytes[] = new byte[1024];
+					int length = 0;
 					fileStream = new FileOutputStream(destination + zipEntry.getName());
-					for (int i = zip.read(); i != -1; i = zip.read()) {
-						fileStream.write(i); //write the bytes
+					while ((length = zip.read(bytes)) > 0){
+						fileStream.write(bytes, 0, length); //write the bytes
 					}
 					fileStream.close();
 				}
