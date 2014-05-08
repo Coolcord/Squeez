@@ -198,6 +198,20 @@ public class ArchiveManager {
 			return Status.NOT_FILE;
 		}
 		
+		//Check the extension
+		String names[] = archive.split("\\.");
+        String extension = "";
+        Boolean extensionValid = false;
+        if (names.length > 1) { //filename has an extension
+        	extension = names[names.length-1];
+        	if (extension.contentEquals("zip")) {
+        		extensionValid = true;
+        	}
+        }
+        if (!extensionValid) {
+        	return Status.NOT_ZIP_FILE;
+        }
+		
 		//Make sure the destination path is fine
 		File destinationFile = new File(destination);
 		if (!destinationFile.exists()) {

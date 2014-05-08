@@ -35,6 +35,9 @@ public class ErrorHandler {
 			case NOT_FILE:
 				alertDialogBuilder.setMessage(fileName + " is not a file!");
 				break;
+			case NOT_ZIP_FILE:
+				alertDialogBuilder.setMessage(fileName + " is not a zip file!");
+				break;
 			case COULD_NOT_DELETE:
 				alertDialogBuilder.setMessage("Could not delete " + fileName);
 				break;

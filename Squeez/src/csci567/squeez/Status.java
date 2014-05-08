@@ -6,6 +6,7 @@ public enum Status {
     NAME_TAKEN,
     NOT_DIRECTORY,
     NOT_FILE,
+    NOT_ZIP_FILE,
     COULD_NOT_DELETE,
     COULD_NOT_RENAME,
     COULD_NOT_COPY,
