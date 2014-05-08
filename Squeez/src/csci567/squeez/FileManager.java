@@ -187,12 +187,13 @@ public class FileManager {
 	}
 	
 	public static Status Copy(String source, String destination) {
-		assert(source != destination);
 		FileInputStream inStream = null;
 		FileOutputStream outStream = null;
+		Status s = Status.OK;
 		
 		//Append (Copy) to the filename if it exists
 		File newFile = new File(destination);
+		String previousDestination = destination;
 		if (newFile.exists()) {
 			String names[] = destination.split("\\.");
 	        String extension = "";
@@ -213,10 +214,19 @@ public class FileManager {
 		        	newFile = new File(destination);
 	        	} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
 	        } else { //no extension
+	        	if (destination.charAt(destination.length() - 1) == '/') {
+	        		destination = destination.substring(0, destination.length()-2);
+	        		newFile = new File(destination);
+	        	}
 	        	do {
 					destination += " (Copy)"; //add (Copy) to the filename
 					newFile = new File(destination);
 				} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
+	        	File previousLocation = new File(previousDestination);
+	        	if (previousLocation.isDirectory()) {
+	        		destination += "/";
+	        	}
+	        	newFile.mkdirs();
 	        }
 		} else {
 			//Build the destination path
@@ -234,6 +244,24 @@ public class FileManager {
 			}
 			newFile = new File(path);
 			newFile.mkdirs();
+		}
+		
+		File file = new File(source);
+		if (file.isDirectory()) {
+			LinkedList<String> files = new LinkedList<String>();
+			List(files, source);
+			for (String fileName : files) {
+				File sourceFile = new File(source + fileName);
+				if (sourceFile.isDirectory()) {
+					File destinationFile = new File(destination + fileName);
+					destinationFile.mkdirs();
+				}
+				s = Copy(source + fileName, destination + fileName);
+				if (s != Status.OK) {
+					return s;
+				}
+			}
+			return Status.OK;
 		}
 		
 		//Prepare copy streams
