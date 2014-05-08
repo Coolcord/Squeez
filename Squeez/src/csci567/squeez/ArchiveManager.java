@@ -1,7 +1,5 @@
 package csci567.squeez;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -93,11 +91,6 @@ public class ArchiveManager {
 				e1.printStackTrace();
 			}
 			try {
-				inputFile.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			try {
 				zip.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -116,24 +109,23 @@ public class ArchiveManager {
 		
 		//Log.d("zip func", "folder zip path: " + folder.getAbsolutePath());
 		//Log.d("zip func", "archive path: " + archive);
+		FileInputStream inputFile = null;
 		LinkedList<String> files = new LinkedList<String>();
-		FileManager.List(files, folder.toString() + "/");
+		FileManager.List(files, folder.getPath() + "/");
 		byte bytes[] = new byte[1024];
 		Status s = Status.OK;
-		FileInputStream inputFile = null;
-		ZipEntry zipEntry = null;
 		
 		//Perform the zip
 		try {
 			for (String fileName : files) {
-				File isDir = new File(fileName);
+				File isDir = new File(folder.getPath() + "/" + fileName);
 				if(isDir.isDirectory()) {
 					ZipFolder(isDir, zip, archive);
 				}
 				else {
 			//		Log.d("zip func", "file names: " + fileName);
-					inputFile = new FileInputStream(fileName);
-					zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
+					inputFile = new FileInputStream(folder.getPath() + "/" + fileName);
+					ZipEntry zipEntry = new ZipEntry(folder.getPath() + "/" + fileName.substring(fileName.lastIndexOf("/") + 1));
 					zip.putNextEntry(zipEntry);
 					int length = 0;
 					while ((length = inputFile.read(bytes)) > 0) {
@@ -146,11 +138,6 @@ public class ArchiveManager {
 			zip.close();
 		} catch (IOException e) { //something went wrong
 			e.printStackTrace();
-			try {
-				inputFile.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 			try {
 				inputFile.close();
 			} catch (IOException e1) {
