@@ -22,6 +22,7 @@
             <ImageView 
                 android:layout_width="24dip"
         		android:layout_height="24dip"
+        		android:id="@+id/directory_icon"
                 android:background="@drawable/folder"/>
             
             <ImageView 

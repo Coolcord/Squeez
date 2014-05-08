@@ -91,6 +91,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			showFirstBootScreen();
 		} else {
 			setContentView(R.layout.activity_view);
+			setDirectoryClick(); //for options menu
 		}
 		context = this;
 	}
@@ -128,7 +129,18 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	private void showView() {
 		setContentView(R.layout.activity_view);
 		context = this;
+		setDirectoryClick(); //for options menu
 		onResume();
+	}
+	
+	private void setDirectoryClick() {
+		ImageView image = (ImageView) findViewById(R.id.directory_icon);
+		image.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				openOptionsMenu();
+			}
+		});
 	}
 	
 	@Override
@@ -264,7 +276,6 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			rootLayout.setLayoutParams(rootLayoutParams);
 			rootLayout.setOrientation(LinearLayout.VERTICAL);
 			
-			//This for loop can be used to make clickable objects for each file given
 			for (String fileName : files) {
 				LinearLayout fileHolder = new LinearLayout(this);
 				fileHolder.setOrientation(LinearLayout.HORIZONTAL);
