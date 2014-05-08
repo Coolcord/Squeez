@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -286,7 +287,25 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 				if (fileName.charAt(fileName.length() - 1) == '/') {
 					imFile.setBackgroundResource(R.drawable.folder);
 				} else {
-					imFile.setBackgroundResource(R.drawable.file);
+					String names[] = fileName.split("\\.");
+			        String extension = "";
+			        Boolean imageSet = false;
+			        if (names.length > 1) { //filename has an extension
+			        	extension = names[names.length-1];
+			        	if (extension.contentEquals("wav") || extension.contentEquals("mp3")) {
+			        		imFile.setBackgroundResource(R.drawable.music);
+			        		imageSet = true;
+			        	} else if (extension.contentEquals("3gp") || extension.contentEquals("mpg") || extension.contentEquals("mpeg") || extension.contentEquals("mpe") || extension.contentEquals("mp4") || extension.contentEquals("avi")) {
+			        		imFile.setBackgroundResource(R.drawable.video);
+			        		imageSet = true;
+			        	} else if (extension.contentEquals("zip") || extension.contentEquals("rar")) {
+			        		imFile.setBackgroundResource(R.drawable.zip);
+			        		imageSet = true;
+			        	}
+			        }
+			        if (!imageSet) {
+			        	imFile.setBackgroundResource(R.drawable.file);
+			        }
 				}
 				imFile.setId(IMAGE_ID_OFFSET + i);
 				imFile.setOnClickListener(this);

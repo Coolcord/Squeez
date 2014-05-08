@@ -141,24 +141,14 @@ public class ArchiveManager {
 					inputFile.close();
 				}
 			}
-			zip.close();
 		} catch (IOException e) { //something went wrong
 			e.printStackTrace();
 			try {
 				inputFile.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
-			}
-			try {
-				zip.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			s = FileManager.Delete(archive);
-			if (s != Status.OK) {
-				return s;
-			}
 			return Status.COULD_NOT_ZIP;
+			}
 		}
 		return Status.OK;
 	}
