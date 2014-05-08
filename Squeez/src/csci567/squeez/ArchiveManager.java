@@ -57,7 +57,10 @@ public class ArchiveManager {
 			for (String fileName : files) {
 				File isDir = new File(fileName);
 				if(isDir.isDirectory()){
-					ZipFolder(isDir, zip, archive);
+					Status status = ZipFolder(isDir, zip, archive);
+					if (status != Status.OK) {
+						return status;
+					}
 				}
 				else{
 				inputFile = new FileInputStream(fileName);
@@ -120,7 +123,10 @@ public class ArchiveManager {
 			for (String fileName : files) {
 				File isDir = new File(folder.getPath() + "/" + fileName);
 				if(isDir.isDirectory()) {
-					ZipFolder(isDir, zip, archive);
+					Status status = ZipFolder(isDir, zip, archive);
+					if (status != Status.OK) {
+						return status;
+					}
 				}
 				else {
 			//		Log.d("zip func", "file names: " + fileName);
