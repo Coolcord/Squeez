@@ -114,15 +114,16 @@ public class ArchiveManager {
 		//Perform the zip
 		try {
 			for (String fileName : files) {
-				File isDir = new File(folder.getPath() + "/" + fileName);
+				fileName = folder.getPath() + "/" + fileName;
+				File isDir = new File(fileName);
 				if(isDir.isDirectory()) {
 					s = ZipFolder(isDir, zip, archive);
 					if (s != Status.OK) {
 						return s;
 					}
 				} else {
-					inputFile = new FileInputStream(folder.getPath() + "/" + fileName);
-					ZipEntry zipEntry = new ZipEntry(folder.getPath() + "/" + fileName.substring(fileName.lastIndexOf("/") + 1));
+					inputFile = new FileInputStream(fileName);
+					ZipEntry zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
 					zip.putNextEntry(zipEntry);
 					int length = 0;
 					while ((length = inputFile.read(bytes)) > 0) {
