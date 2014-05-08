@@ -432,7 +432,25 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 				if (fileName.charAt(fileName.length() - 1) == '/') {
 					btnFile.setImageResource(R.drawable.folder);
 				} else {
-					btnFile.setImageResource(R.drawable.file);
+					String names[] = fileName.split("\\.");
+			        String extension = "";
+			        Boolean imageSet = false;
+			        if (names.length > 1) { //filename has an extension
+			        	extension = names[names.length-1];
+			        	if (extension.contentEquals("wav") || extension.contentEquals("mp3")) {
+			        		btnFile.setImageResource(R.drawable.music);
+			        		imageSet = true;
+			        	} else if (extension.contentEquals("3gp") || extension.contentEquals("mpg") || extension.contentEquals("mpeg") || extension.contentEquals("mpe") || extension.contentEquals("mp4") || extension.contentEquals("avi")) {
+			        		btnFile.setImageResource(R.drawable.video);
+			        		imageSet = true;
+			        	} else if (extension.contentEquals("zip") || extension.contentEquals("rar")) {
+			        		btnFile.setImageResource(R.drawable.zip);
+			        		imageSet = true;
+			        	}
+			        }
+			        if (!imageSet) {
+			        	btnFile.setImageResource(R.drawable.file);
+			        }
 				}
 				TextView tvFile = new TextView(this);
 				tvFile.setText(fileName);
