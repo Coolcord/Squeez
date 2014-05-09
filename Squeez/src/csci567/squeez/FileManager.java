@@ -251,7 +251,10 @@ public class FileManager {
 		File file = new File(source);
 		if (file.isDirectory()) {
 			LinkedList<String> files = new LinkedList<String>();
-			List(files, source);
+			s = List(files, source);
+			if (s != Status.OK) {
+				return s;
+			}
 			for (String fileName : files) {
 				File sourceFile = new File(source + fileName);
 				if (sourceFile.isDirectory()) {

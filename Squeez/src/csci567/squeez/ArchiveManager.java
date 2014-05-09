@@ -55,10 +55,8 @@ public class ArchiveManager {
 			for (String fileName : files) {
 				File isDir = new File(fileName);
 				if(isDir.isDirectory()){
-					Status status = ZipFolder(isDir, zip, archive);
-					if (status != Status.OK) {
-						return status;
-					}
+					Status status = ZipFolder(isDir, "", zip, archive);
+					return s;
 				} else {
 					inputFile = new FileInputStream(fileName);
 					zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
@@ -100,7 +98,7 @@ public class ArchiveManager {
 		return Status.OK;
 	}
 	
-	public static Status ZipFolder(File folder, ZipOutputStream zip, String archive) {
+	public static Status ZipFolder(File folder, String currentPath, ZipOutputStream zip, String archive) {
 		
 		FileInputStream inputFile = null;
 		LinkedList<String> files = new LinkedList<String>();
@@ -117,13 +115,11 @@ public class ArchiveManager {
 				fileName = folder.getPath() + "/" + fileName;
 				File isDir = new File(fileName);
 				if(isDir.isDirectory()) {
-					s = ZipFolder(isDir, zip, archive);
-					if (s != Status.OK) {
-						return s;
-					}
+					s = ZipFolder(isDir, currentPath + fileName.substring(fileName.lastIndexOf("/") + 1), zip, archive);
+					return s;
 				} else {
 					inputFile = new FileInputStream(fileName);
-					ZipEntry zipEntry = new ZipEntry(fileName.substring(fileName.lastIndexOf("/") + 1));
+					ZipEntry zipEntry = new ZipEntry(currentPath + fileName.substring(fileName.lastIndexOf("/") + 1));
 					zip.putNextEntry(zipEntry);
 					int length = 0;
 					while ((length = inputFile.read(bytes)) > 0) {
