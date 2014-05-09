@@ -774,7 +774,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 										for (String file : storedManage) {
 											String[] names = file.split("/");
 											String location = directory + names[names.length-1];
-											s = FileManager.Copy(file, location);
+											s = FileManager.Copy(file, location, true);
 											if (s != Status.OK) {
 												final Status error = s;
 												final String fileName = file;

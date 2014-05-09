@@ -80,7 +80,7 @@ public class FileManager {
 		Status s = Status.OK;
 		
 		//Perform the copy
-		s = Copy(source, destination);
+		s = Copy(source, destination, true);
 		if (s != Status.OK) { //make sure the copy was successful
 			Delete(destination); //try to undo what's been done
 			return s;
@@ -163,7 +163,7 @@ public class FileManager {
 		
 		Status s = Status.OK;
 		Status listStatus = Status.OK;
-		s = Copy(source, destination);
+		s = Copy(source, destination, true);
 		
 		//Build the destination path
 		String[] name = source.split("/");
@@ -186,7 +186,7 @@ public class FileManager {
 		return s;
 	}
 	
-	public static Status Copy(String source, String destination) {
+	public static Status Copy(String source, String destination, Boolean autoAppend) {
 		FileInputStream inStream = null;
 		FileOutputStream outStream = null;
 		Status s = Status.OK;
@@ -194,56 +194,58 @@ public class FileManager {
 		//Append (Copy) to the filename if it exists
 		File newFile = new File(destination);
 		String previousDestination = destination;
-		if (newFile.exists()) {
-			String names[] = destination.split("\\.");
-	        String extension = "";
-	        String path = "";
-	        int appendCount = 0;
-	        if (names.length > 1) { //filename has an extension
-	        	extension = names[names.length-1];
-	        	for (int i = 0; i < names.length-1; i++) {
-		        	path += names[i];
-		        }
-	        	do {
-		        	appendCount++;
-		        	destination = path;
-		        	for (int i = 0; i < appendCount; i++) {
-		        		destination += " (Copy)"; //add (Copy) to the filename
+		if (autoAppend) {
+			if (newFile.exists()) {
+				String names[] = destination.split("\\.");
+		        String extension = "";
+		        String path = "";
+		        int appendCount = 0;
+		        if (names.length > 1) { //filename has an extension
+		        	extension = names[names.length-1];
+		        	for (int i = 0; i < names.length-1; i++) {
+			        	path += names[i];
+			        }
+		        	do {
+			        	appendCount++;
+			        	destination = path;
+			        	for (int i = 0; i < appendCount; i++) {
+			        		destination += " (Copy)"; //add (Copy) to the filename
+			        	}
+			        	destination += "." + extension;
+			        	newFile = new File(destination);
+		        	} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
+		        } else { //no extension
+		        	if (destination.charAt(destination.length() - 1) == '/') {
+		        		destination = destination.substring(0, destination.length()-2);
+		        		newFile = new File(destination);
 		        	}
-		        	destination += "." + extension;
-		        	newFile = new File(destination);
-	        	} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
-	        } else { //no extension
-	        	if (destination.charAt(destination.length() - 1) == '/') {
-	        		destination = destination.substring(0, destination.length()-2);
-	        		newFile = new File(destination);
-	        	}
-	        	do {
-					destination += " (Copy)"; //add (Copy) to the filename
-					newFile = new File(destination);
-				} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
-	        	File previousLocation = new File(previousDestination);
-	        	if (previousLocation.isDirectory()) {
-	        		destination += "/";
-	        	}
-	        	newFile.mkdirs();
-	        }
-		} else {
-			//Build the destination path
-			String[] name = source.split("/");
-			String path = "";
-			if (name.length > 1) {
-				for (int i = 0; i < name.length-1; i++) {
-					if (name[i].length() > 0) {
-						path += "/" + name[i];
-					}
-				}
-				path += "/";
+		        	do {
+						destination += " (Copy)"; //add (Copy) to the filename
+						newFile = new File(destination);
+					} while (newFile.exists()); //continue to append (Copy) until a file with the name does not exist
+		        	File previousLocation = new File(previousDestination);
+		        	if (previousLocation.isDirectory()) {
+		        		destination += "/";
+		        	}
+		        	newFile.mkdirs();
+		        }
 			} else {
-				path = "/";
+				//Build the destination path
+				String[] name = source.split("/");
+				String path = "";
+				if (name.length > 1) {
+					for (int i = 0; i < name.length-1; i++) {
+						if (name[i].length() > 0) {
+							path += "/" + name[i];
+						}
+					}
+					path += "/";
+				} else {
+					path = "/";
+				}
+				newFile = new File(path);
+				newFile.mkdirs();
 			}
-			newFile = new File(path);
-			newFile.mkdirs();
 		}
 		
 		File file = new File(source);
@@ -255,8 +257,10 @@ public class FileManager {
 				if (sourceFile.isDirectory()) {
 					File destinationFile = new File(destination + fileName);
 					destinationFile.mkdirs();
+					s = Copy(source + fileName, destination + fileName, false);
+				} else {
+					s = Copy(source + fileName, destination + fileName, true);
 				}
-				s = Copy(source + fileName, destination + fileName);
 				if (s != Status.OK) {
 					return s;
 				}
