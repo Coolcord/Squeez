@@ -69,8 +69,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		firstBoot = prefs.getBoolean("FirstBoot", true);
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		this.firstBoot = prefs.getBoolean("FirstBoot", true);
 		int intViewType = prefs.getInt("ViewType", 0);
 		
 		switch (intViewType) {
@@ -348,7 +348,7 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 			getWindowManager().getDefaultDisplay().getMetrics(dm);
 			for (int width = dm.widthPixels; width > 0; width -= 240)
 			{
-				maxCols++;
+				++maxCols;
 			}
 			if (maxCols > 5) {
 				maxCols = 5;
@@ -837,7 +837,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 											final String fileName = file;
 											final Runnable showError = new Runnable() {
 											    public void run() {
-											    	ErrorHandler.ShowError(error, fileName, context);												}
+											    	ErrorHandler.ShowError(error, fileName, context);
+												}
 											};
 											runOnUiThread(showError);
 											break;
@@ -895,7 +896,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 										final String fileName = archive;
 										final Runnable showError = new Runnable() {
 										    public void run() {
-										    	ErrorHandler.ShowError(error, fileName, context);												}
+										    	ErrorHandler.ShowError(error, fileName, context);
+											}
 										};
 										runOnUiThread(showError);
 									} else {
@@ -977,7 +979,8 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 												final String fileName = file;
 												final Runnable showError = new Runnable() {
 												    public void run() {
-												    	ErrorHandler.ShowError(error, fileName, context);												}
+												    	ErrorHandler.ShowError(error, fileName, context);
+													}
 												};
 												runOnUiThread(showError);
 												break;
@@ -1144,21 +1147,21 @@ public class FileViewer extends Activity implements OnClickListener, OnLongClick
 	
 	@Override
 	public void onBackPressed() {
-		if (directory == "/") {
+		if (this.directory == "/") {
 			super.onBackPressed();
 		} else {
 			//Build the destination path
-			String[] name = directory.split("/");
-			directory = "";
+			String[] name = this.directory.split("/");
 			if (name.length > 1) {
-				for (int i = 0; i < name.length-1; i++) {
+				this.directory = "";
+				for (int i = 0; i < name.length-1; ++i) {
 					if (name[i].length() > 0) {
-						directory += "/" + name[i];
+						this.directory += "/" + name[i];
 					}
 				}
-				directory += "/";
+				this.directory += "/";
 			} else {
-				directory = "/";
+				this.directory = "/";
 			}
 			Refresh();
 		}
