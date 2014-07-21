@@ -33,7 +33,7 @@ public class FileManager {
 		
 		//Add all of the files to the LinkedList
 		if (fileList != null) {
-			for (int i = 0; i < fileList.length; i++) {
+			for (int i = 0; i < fileList.length; ++i) {
 				folder = new File(directory + fileList[i]);
 				if (folder.canRead()) { //only show files that can be accessed
 					if (folder.isDirectory()) {
@@ -58,7 +58,7 @@ public class FileManager {
 		String[] name = source.split("/");
 		String folder = "";
 		if (name.length > 1) {
-			for (int i = 0; i < name.length-1; i++) {
+			for (int i = 0; i < name.length-1; ++i) {
 				if (name[i].length() > 0) {
 					folder += "/" + name[i];
 				}
@@ -106,7 +106,7 @@ public class FileManager {
 		String[] name = source.split("/");
 		String folder = "";
 		if (name.length > 1) {
-			for (int i = 0; i < name.length-1; i++) {
+			for (int i = 0; i < name.length-1; ++i) {
 				if (name[i].length() > 0) {
 					folder += "/" + name[i];
 				}
@@ -130,7 +130,7 @@ public class FileManager {
 		String[] name = source.split("/");
 		String destination = "";
 		if (name.length > 1) {
-			for (int i = 0; i < name.length-1; i++) {
+			for (int i = 0; i < name.length-1; ++i) {
 				if (name[i].length() > 0) {
 					destination += "/" + name[i];
 				}
@@ -167,9 +167,10 @@ public class FileManager {
 		
 		//Build the destination path
 		String[] name = source.split("/");
-		String folder = "";
+		String folder;
 		if (name.length > 1) {
-			for (int i = 0; i < name.length-1; i++) {
+			folder = "";
+			for (int i = 0; i < name.length-1; ++i) {
 				if (name[i].length() > 0) {
 					folder += "/" + name[i];
 				}
@@ -202,13 +203,13 @@ public class FileManager {
 		        int appendCount = 0;
 		        if (names.length > 1) { //filename has an extension
 		        	extension = names[names.length-1];
-		        	for (int i = 0; i < names.length-1; i++) {
+		        	for (int i = 0; i < names.length-1; ++i) {
 			        	path += names[i];
 			        }
 		        	do {
 			        	appendCount++;
 			        	destination = path;
-			        	for (int i = 0; i < appendCount; i++) {
+			        	for (int i = 0; i < appendCount; ++i) {
 			        		destination += " (Copy)"; //add (Copy) to the filename
 			        	}
 			        	destination += "." + extension;
@@ -234,7 +235,7 @@ public class FileManager {
 				String[] name = source.split("/");
 				String path = "";
 				if (name.length > 1) {
-					for (int i = 0; i < name.length-1; i++) {
+					for (int i = 0; i < name.length-1; ++i) {
 						if (name[i].length() > 0) {
 							path += "/" + name[i];
 						}
@@ -321,7 +322,7 @@ public class FileManager {
 		String[] name = source.split("/");
 		String folder = "";
 		if (name.length > 1) {
-			for (int i = 0; i < name.length-1; i++) {
+			for (int i = 0; i < name.length-1; ++i) {
 				if (name[i].length() > 0) {
 					folder += "/" + name[i];
 				}

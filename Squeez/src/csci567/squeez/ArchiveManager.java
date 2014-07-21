@@ -147,7 +147,7 @@ public class ArchiveManager {
 		String[] name = archive.split("/");
 		String destination = "";
 		if (name.length > 1) {
-			for (int i = 0; i < name.length-1; i++) {
+			for (int i = 0; i < name.length-1; ++i) {
 				if (name[i].length() > 0) {
 					destination += "/" + name[i];
 				}
@@ -225,7 +225,7 @@ public class ArchiveManager {
 					byte bytes[] = new byte[1024];
 					int length = 0;
 					fileStream = new FileOutputStream(destination + zipEntry.getName());
-					while ((length = zip.read(bytes)) > 0){
+					while ((length = zip.read(bytes)) > 0) {
 						fileStream.write(bytes, 0, length); //write the bytes
 					}
 					fileStream.close();
