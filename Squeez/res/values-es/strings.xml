@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Squeez</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="hello_world">¡Hola, mundo!</string>
+    <string name="list">Vista de lista</string>
+    <string name="grid">Vista de rejilla</string>
+    <string name="title_activity_list_view">VistaLista</string>
+    <string name="title_activity_list_view2">VistaLista2</string>
+    <string name="title_activity_grid_view">VistaRejilla</string>
+    <string name="zip">Comprimir</string>
+    <string name="open">Abrir</string>
+    <string name="move">Mover</string>
+    <string name="copy">Copiar</string>
+    <string name="delete">Borrar</string>
+    <string name="unzip">Descomprimir</string>
+    <string name="manage">Gestionar</string>
+    <string name="archive">Archivar</string>
+    <string name="rename">Renombrar</string>
+    <string name="select">Seleccionar</string>
+    <string name="change_view_mode">Cambiar el modo de vista</string>
+    <string name="clear_selected">Limpiar la selección</string>
+    <string name="welcome">¡Bienvenido a Squeez!</string>
+    <string name="programmed_by">Programado por:</string>
+    <string name="programmer1">Cordell Heath</string>
+    <string name="programmer2">Cameron Hastey</string>
+    <string name="programmer3">Tona Thao</string>
+    <string name="get_started">Selecciona una vista para empezar:</string>
+
+</resources>
