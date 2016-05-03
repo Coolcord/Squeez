@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Squeez</string>
+    <string name="action_settings">Nustatymai</string>
+    <string name="hello_world">Labas Pasauli!</string>
+    <string name="list">Sarašas</string>
+    <string name="grid">Tinklelis</string>
+    <string name="title_activity_list_view">Sąrašo rėžimas</string>
+    <string name="title_activity_list_view2">Sąrašo rėžimas 2</string>
+    <string name="title_activity_grid_view">Tinklelio rėžimas</string>
+    <string name="zip">Suarchyvuoti</string>
+    <string name="open">Atidaryti</string>
+    <string name="move">Perkelti</string>
+    <string name="copy">Kopijuoti</string>
+    <string name="delete">Ištrinti</string>
+    <string name="unzip">Išarchyvuoti</string>
+    <string name="manage">Tvarkyti</string>
+    <string name="archive">Archyvas</string>
+    <string name="rename">Pervardinti</string>
+    <string name="select">Pasirinkite</string>
+    <string name="change_view_mode">Pakeisti peržiūros rėžimą</string>
+    <string name="clear_selected">Išvalyti pasirinkimą</string>
+    <string name="welcome">Sveiki tai Squeez!</string>
+    <string name="programmed_by">Suprogramavo:</string>
+    <string name="programmer1">Cordell Heath</string>
+    <string name="programmer2">Cameron Hastey</string>
+    <string name="programmer3">Tona Thao</string>
+    <string name="get_started">Pasirinkite peržiūros rėžimą, kad pradėtumėte:</string>
+
+</resources>
