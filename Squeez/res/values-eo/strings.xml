@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Squeez</string>
+    <string name="action_settings">Agordoj</string>
+    <string name="hello_world">Saluton mondo!</string>
+    <string name="list">Listo vido</string>
+    <string name="grid">Krado vido</string>
+    <string name="title_activity_list_view">Listovido</string>
+    <string name="title_activity_list_view2">Listovido2</string>
+    <string name="title_activity_grid_view">Kradovido</string>
+    <string name="zip">Zip</string>
+    <string name="open">Malfermi</string>
+    <string name="move">Transloki</string>
+    <string name="copy">Kopii</string>
+    <string name="delete">Forigi</string>
+    <string name="unzip">Malpaki</string>
+    <string name="manage">Administrado</string>
+    <string name="archive">Arĥivo</string>
+    <string name="rename">Renomi</string>
+    <string name="select">Elekti</string>
+    <string name="change_view_mode">Elektu vidon</string>
+    <string name="clear_selected">Puriĝu elektita</string>
+    <string name="welcome">Bonvenon en Squeez!</string>
+    <string name="programmed_by">Programita:</string>
+    <string name="programmer1">Cordell Heath</string>
+    <string name="programmer2">Cameron Hastey</string>
+    <string name="programmer3">Tona Thao</string>
+    <string name="get_started">Elektu vidon, por komenci:</string>
+
+</resources>
