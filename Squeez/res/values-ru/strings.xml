@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Squeez</string>
+    <string name="action_settings">Настройки</string>
+    <string name="hello_world">Привет мир!</string>
+    <string name="list">Вид списка</string>
+    <string name="grid">Вид сетки</string>
+    <string name="title_activity_list_view">Видсписка</string>
+    <string name="title_activity_list_view2">Видсписка2</string>
+    <string name="title_activity_grid_view">Видсетки</string>
+    <string name="zip">Zip</string>
+    <string name="open">Открыть</string>
+    <string name="move">Переместить</string>
+    <string name="copy">Копировать</string>
+    <string name="delete">Удалить</string>
+    <string name="unzip">Распаковать</string>
+    <string name="manage">Управление</string>
+    <string name="archive">Архив</string>
+    <string name="rename">Переименовать</string>
+    <string name="select">Выбрать</string>
+    <string name="change_view_mode">Выбрать режим просмотра</string>
+    <string name="clear_selected">Очистить выбранное</string>
+    <string name="welcome">Добро пожаловать в Squeez!</string>
+    <string name="programmed_by">Запрограммировано:</string>
+    <string name="programmer1">Cordell Heath</string>
+    <string name="programmer2">Cameron Hastey</string>
+    <string name="programmer3">Tona Thao</string>
+    <string name="get_started">Выберите вид чтобы начать:</string>
+
+</resources>
